@@ -3,7 +3,8 @@
 ## How to run
 
 You need to have docker installed on your machine.
-Run project:
+
+Start project:
 
 ```bash
 docker compose up
@@ -16,6 +17,8 @@ docker compose up db backend
 ```
 
 ### Dev setup
+
+#### Backend
 
 Activate virtual environment:
 
