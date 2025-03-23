@@ -1,0 +1,12 @@
+# OS
+DS_Store
+
+# Virtual environment
+.venv/
+
+# Python
+__pycache__/
+pyrightconfig.json
+
+# Environment variables
+.env
