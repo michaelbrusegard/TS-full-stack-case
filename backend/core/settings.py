@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'rest_framework',
+    'properties',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
