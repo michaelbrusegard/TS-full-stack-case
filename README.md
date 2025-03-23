@@ -2,6 +2,19 @@
 
 ## How to run
 
+You need to have docker installed on your machine.
+Run project:
+
+```bash
+docker compose up
+```
+
+Only run backend and database:
+
+```bash
+docker compose up db backend
+```
+
 ### Dev setup
 
 Activate virtual environment:
@@ -19,13 +32,7 @@ pip install -r requirements.txt
 Run migrations:
 
 ```bash
-python manage.py migrate
-```
-
-Run development server:
-
-```bash
-python manage.py runserver 8000
+docker compose exec backend python manage.py migrate
 ```
 
 ## A Brief Overview of Our Current Tech Stack
