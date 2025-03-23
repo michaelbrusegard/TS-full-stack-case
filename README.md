@@ -38,6 +38,12 @@ Run migrations:
 docker compose exec backend python manage.py migrate
 ```
 
+Make migrations:
+
+```bash
+docker compose exec backend python manage.py makemigrations
+```
+
 ## A Brief Overview of Our Current Tech Stack
 
 Our backend is built on the Python-based Django REST framework. We use a
