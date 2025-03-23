@@ -2,6 +2,32 @@
 
 ## How to run
 
+### Dev setup
+
+Activate virtual environment:
+
+```bash
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run migrations:
+
+```bash
+python manage.py migrate
+```
+
+Run development server:
+
+```bash
+python manage.py runserver 8000
+```
+
 ## A Brief Overview of Our Current Tech Stack
 
 Our backend is built on the Python-based Django REST framework. We use a
