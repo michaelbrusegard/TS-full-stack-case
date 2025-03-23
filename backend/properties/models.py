@@ -5,15 +5,15 @@ class Portfolio(models.Model):
     name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return str(self.name)
 
 class Property(models.Model):
     portfolio = models.ForeignKey(
-        Portfolio, 
-        related_name='properties', 
-        on_delete=models.CASCADE, 
-        null=True, 
+        Portfolio,
+        related_name='properties',
+        on_delete=models.CASCADE,
+        null=True,
         blank=True
     )
     name = models.CharField(max_length=255)
@@ -30,5 +30,5 @@ class Property(models.Model):
         if self.handled_risks > self.relevant_risks:
             raise ValidationError("Number of handled risks cannot exceed number of relevant risks")
 
-    def __str__(self) -> str:
+    def __str__(self):
         return str(self.name)
