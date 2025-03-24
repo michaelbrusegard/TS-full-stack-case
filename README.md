@@ -16,7 +16,7 @@ Only run backend and database:
 docker compose up db backend
 ```
 
-### Dev setup
+### Dev setup (just for remembering commands, can be ignored)
 
 #### Backend
 
@@ -26,16 +26,19 @@ Activate virtual environment:
 source venv/bin/activate
 ```
 
-Install dependencies:
+Install dependencies with uv:
 
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
-Run migrations:
+Adding new dependencies with uv (make sure to be inside the backend directory):
 
 ```bash
-docker compose exec backend python manage.py migrate
+uv pip install <dependency>
+
+# Update requirements.txt
+uv pip freeze > requirements.txt
 ```
 
 Make migrations:
@@ -48,6 +51,14 @@ Run tests for properties app:
 
 ```bash
 docker compose exec backend python manage.py test properties
+```
+
+Do not need to apply migrations or fixtures. This is done automatically in the `compose.yml` file when launching the backend container. But for reference:
+
+```bash
+docker compose exec backend python manage.py migrate
+
+docker compose exec backend python manage.py generate_fixtures
 ```
 
 ## Time spent
