@@ -9,10 +9,20 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - ${DB_PORT}:5432
- 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   backend:
     build: ./backend
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      bash -c "python manage.py migrate &&
+      if [ \"$${DJANGO_ENV}\" = \"production\" ]; then
+        gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 3;
+      else
+        python manage.py runserver 0.0.0.0:8000;
+      fi"
     volumes:
       - ./backend:/app
     ports:
@@ -20,13 +30,15 @@ services:
     environment:
       - DATABASE_URL=postgis://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_ENV=${DJANGO_ENV:-development}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
   postgres_data:
