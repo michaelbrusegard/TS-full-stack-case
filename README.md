@@ -44,6 +44,12 @@ Make migrations:
 docker compose exec backend python manage.py makemigrations
 ```
 
+Run tests for properties app:
+
+```bash
+docker compose exec backend python manage.py test properties
+```
+
 ## A Brief Overview of Our Current Tech Stack
 
 Our backend is built on the Python-based Django REST framework. We use a

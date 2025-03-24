@@ -12,7 +12,9 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 # REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': int(os.getenv('PAGE_SIZE', '10'))
+    'PAGE_SIZE': int(os.getenv('PAGE_SIZE', '10')),
+    'ORDERING_PARAM': 'ordering',
+    'DEFAULT_ORDERING': ['id'],
 }
 
 # Database settings
@@ -34,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'rest_framework',
+    'rest_framework_gis',
     'properties',
 ]
 MIDDLEWARE = [

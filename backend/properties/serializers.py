@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from .models import Property, Portfolio
 
 class PortfolioSerializer(serializers.ModelSerializer):
@@ -6,9 +7,10 @@ class PortfolioSerializer(serializers.ModelSerializer):
         model = Portfolio
         fields = ['id', 'name', 'created_at']
 
-class PropertySerializer(serializers.ModelSerializer):
+class PropertySerializer(GeoFeatureModelSerializer):
     class Meta:
         model = Property
+        geo_field = 'location'
         fields = [
             'id', 'portfolio', 'name', 'address', 'zip_code',
             'city', 'location', 'estimated_value', 'relevant_risks',
