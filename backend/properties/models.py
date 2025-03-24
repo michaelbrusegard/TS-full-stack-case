@@ -1,5 +1,4 @@
 from django.contrib.gis.db import models
-from django.core.exceptions import ValidationError
 
 class Portfolio(models.Model):
     name = models.CharField(max_length=255)
@@ -25,10 +24,6 @@ class Property(models.Model):
     relevant_risks = models.IntegerField()
     handled_risks = models.IntegerField()
     total_financial_risk = models.IntegerField(help_text="Risk in NOK")
-
-    def clean(self):
-        if self.handled_risks > self.relevant_risks:
-            raise ValidationError("Number of handled risks cannot exceed number of relevant risks")
 
     def __str__(self):
         return str(self.name)
