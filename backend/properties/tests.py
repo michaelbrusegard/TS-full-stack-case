@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.core.cache import cache
 from django.contrib.gis.geos import Point
 from rest_framework.test import APIClient
 from rest_framework import status
@@ -155,3 +156,27 @@ class PortfolioViewSetTests(TestCase):
         response = self.client.delete(f'/api/portfolios/{self.portfolio.pk}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Portfolio.objects.count(), 0)
+
+class ThrottleTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        cache.clear()
+
+    def test_property_throttling(self):
+        for _ in range(100):
+            response = self.client.get('/api/properties/')
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.client.get('/api/properties/')
+        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+
+    def test_portfolio_throttling(self):
+        for _ in range(100):
+            response = self.client.get('/api/portfolios/')
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.client.get('/api/portfolios/')
+        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+
+    def tearDown(self):
+        cache.clear()

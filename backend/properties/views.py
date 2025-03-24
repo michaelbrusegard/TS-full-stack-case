@@ -6,6 +6,7 @@ from rest_framework.filters import OrderingFilter
 from typing import Any, cast
 from .models import Property, Portfolio
 from .serializers import PropertySerializer, PortfolioSerializer
+from .throttles import PropertyRateThrottle
 
 class GeoPropertyPagination(GeoJsonPagination):
     page_size = 10
@@ -15,11 +16,13 @@ class GeoPropertyPagination(GeoJsonPagination):
 class PortfolioViewSet(viewsets.ModelViewSet):
     queryset = Portfolio.objects.all()
     serializer_class = PortfolioSerializer
+    throttle_classes = [PropertyRateThrottle]
     pagination_class = None
 
 class PropertyViewSet(viewsets.ModelViewSet):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
+    throttle_classes = [PropertyRateThrottle]
     pagination_class = GeoPropertyPagination
     bbox_filter_field = 'location'
     filter_backends = (InBBoxFilter, OrderingFilter)
