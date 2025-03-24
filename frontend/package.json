@@ -7,7 +7,8 @@
     "dev": "vinxi dev",
     "build": "vinxi build",
     "start": "vinxi start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "generate-api-types": "openapi-typescript http://localhost:8000/api/schema/ --output ./app/api/schema.ts"
   },
   "author": "Michael Brusegard",
   "dependencies": {
@@ -51,6 +52,7 @@
     "eslint-plugin-react-compiler": "19.0.0-beta-aeaed83-20250323",
     "eslint-plugin-react-hooks": "^5.2.0",
     "globals": "^16.0.0",
+    "openapi-typescript": "^7.6.1",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "typescript": "^5.8.2",

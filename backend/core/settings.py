@@ -21,6 +21,15 @@ DATABASES = {
     }
 }
 
+# Rest
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Telescope Case API',
+    'VERSION': '1.0.0',
+}
+
 # Application
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -28,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'rest_framework',
     'rest_framework_gis',
+    'drf_spectacular',
     'properties',
 ]
 MIDDLEWARE = [

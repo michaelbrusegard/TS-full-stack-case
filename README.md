@@ -32,6 +32,12 @@ Start the development server:
 pnpm dev
 ```
 
+Run linter:
+
+```bash
+pnpm lint
+```
+
 #### Backend
 
 Activate virtual environment:
