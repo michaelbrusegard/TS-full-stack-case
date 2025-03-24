@@ -17,7 +17,9 @@ services:
   backend:
     build: ./backend
     command: >
-      bash -c "python manage.py migrate &&
+      bash -c "python manage.py flush --no-input &&
+      python manage.py migrate &&
+      python manage.py generate_fixtures &&
       if [ \"$${DJANGO_ENV}\" = \"production\" ]; then
         gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 3;
       else
