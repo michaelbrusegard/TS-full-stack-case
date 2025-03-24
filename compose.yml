@@ -41,6 +41,17 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  frontend:
+    build: ./frontend
+    command: node .output/server/index.mjs
+    volumes:
+      - ./frontend:/app
+    ports:
+      - ${FRONTEND_PORT:-3000}:3000
+    environment:
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:
