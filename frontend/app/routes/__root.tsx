@@ -1,10 +1,12 @@
-import type { ReactNode } from 'react'
 import {
-  Outlet,
-  createRootRoute,
   HeadContent,
+  Outlet,
   Scripts,
-} from '@tanstack/react-router'
+  createRootRoute,
+} from '@tanstack/react-router';
+import type { ReactNode } from 'react';
+
+import appCss from '@/styles/app.css?url';
 
 export const Route = createRootRoute({
   head: () => ({
@@ -20,16 +22,22 @@ export const Route = createRootRoute({
         title: 'Telescope Case Properties',
       },
     ],
+    links: [
+      {
+        rel: 'stylesheet',
+        href: appCss,
+      },
+    ],
   }),
   component: RootComponent,
-})
+});
 
 function RootComponent() {
   return (
     <RootDocument>
       <Outlet />
     </RootDocument>
-  )
+  );
 }
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
@@ -38,10 +46,10 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
-      <body className='h-full w-full bg-background text-foreground antialiased'>
+      <body className='bg-background text-foreground h-full w-full antialiased'>
         {children}
         <Scripts />
       </body>
     </html>
-  )
+  );
 }

@@ -9,6 +9,12 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noEmit": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./app/*"
+      ]
+    }
   }
 }

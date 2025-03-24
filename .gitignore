@@ -1,15 +1,15 @@
 # OS
 DS_Store
 
-# Virtual environment
+# Backend
 .venv/
-
-# Python
 __pycache__/
 pyrightconfig.json
 
-# Node
+# Frontend
 node_modules/
+.output
+.vinxi
 
 # Environment variables
 .env

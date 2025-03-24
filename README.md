@@ -18,6 +18,20 @@ docker compose up db backend
 
 ### Dev setup (just for remembering commands, can be ignored)
 
+#### Frontend
+
+Install dependencies with pnpm:
+
+```bash
+pnpm install
+```
+
+Start the development server:
+
+```bash
+pnpm dev
+```
+
 #### Backend
 
 Activate virtual environment:
