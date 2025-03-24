@@ -50,6 +50,12 @@ Run tests for properties app:
 docker compose exec backend python manage.py test properties
 ```
 
+## Time spent
+
+Dealt with uni stuff while working on this case, so time estimates are a little vague.
+
+- **Backend + Project setup**: ~3 hours work (5 hours total)
+
 ## A Brief Overview of Our Current Tech Stack
 
 Our backend is built on the Python-based Django REST framework. We use a
