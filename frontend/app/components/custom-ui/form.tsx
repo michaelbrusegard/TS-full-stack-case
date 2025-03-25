@@ -200,6 +200,52 @@ function MapField({
   );
 }
 
+type CurrencyFieldProps = Omit<
+  React.ComponentProps<typeof Input>,
+  'type' | 'value' | 'onChange' | 'onBlur'
+> & {
+  label: string;
+  currency?: string;
+  locale?: string;
+};
+
+function CurrencyField({
+  className,
+  label,
+  currency = 'NOK',
+  locale = 'nb-NO',
+  ...props
+}: CurrencyFieldProps) {
+  const field = useFieldContext<number>();
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  };
+
+  const parseCurrency = (value: string) => {
+    const cleaned = value.replace(/[^0-9.-]/g, '');
+    return Number(cleaned) || 0;
+  };
+
+  return (
+    <BaseField label={label} className={className}>
+      <Input
+        type='text'
+        inputMode='decimal'
+        value={field.state.value ? formatCurrency(field.state.value) : ''}
+        onChange={(e) => field.handleChange(parseCurrency(e.target.value))}
+        onBlur={field.handleBlur}
+        {...props}
+      />
+    </BaseField>
+  );
+}
+
 type SubmitButtonProps = Omit<React.ComponentProps<typeof Button>, 'type'> &
   VariantProps<typeof buttonVariants>;
 
@@ -233,6 +279,7 @@ const { useAppForm } = createFormHook({
     NumberField,
     TextAreaField,
     MapField,
+    CurrencyField,
   },
   formComponents: {
     SubmitButton,
