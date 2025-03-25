@@ -5,7 +5,7 @@ from .models import Property, Portfolio
 class PortfolioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Portfolio
-        fields = ['id', 'name', 'created_at', 'properties']
+        fields = ['id', 'name', 'created_at']
 
 class PropertySerializer(GeoFeatureModelSerializer):
     class Meta:
