@@ -1,4 +1,4 @@
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 function UtilityHeader() {

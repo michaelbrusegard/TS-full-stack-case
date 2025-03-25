@@ -9,7 +9,7 @@ type UpdatePortfolio = Pick<Portfolio, 'name'>;
 const BACKEND_API_URL = process.env.BACKEND_API_URL ?? 'http://localhost:8000';
 
 function getPortfoliosQueryOptions() {
-  return queryOptions({
+  return queryOptions<Portfolio[]>({
     queryKey: ['portfolios'],
     queryFn: async () => {
       const response = await fetch(`${BACKEND_API_URL}/api/portfolios/`);

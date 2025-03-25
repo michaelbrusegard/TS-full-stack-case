@@ -1,12 +1,14 @@
+import { getPortfoliosQueryOptions } from '@/api/portfolios';
 import {
   useCreatePortfolioMutation,
   useDeletePortfolioMutation,
   useUpdatePortfolioMutation,
 } from '@/api/portfolios';
+import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from '@tanstack/react-router';
 import { useStore } from '@tanstack/react-store';
 import { MapIcon, PlusIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { PortfolioDialog } from '@/components/portfolios/PortfolioDialog';
 import { PortfolioOptionsDropdown } from '@/components/portfolios/PortfolioOptionsDropdown';
@@ -31,6 +33,7 @@ import { cn } from '@/lib/utils';
 import { portfolioActions, portfoliosStore } from '@/stores/portfolios';
 
 function PortfolioSidebar() {
+  const portfoliosQuery = useQuery(getPortfoliosQueryOptions());
   const portfolios = useStore(portfoliosStore, (state) => state.portfolios);
   const looseParams = useParams({ strict: false });
   const [newPortfolioOpen, setNewPortfolioOpen] = useState(false);
@@ -38,6 +41,14 @@ function PortfolioSidebar() {
   const createPortfolioMutation = useCreatePortfolioMutation();
   const updatePortfolioMutation = useUpdatePortfolioMutation();
   const deletePortfolioMutation = useDeletePortfolioMutation();
+
+  const isLoading = portfoliosQuery.isLoading || portfolios.length === 0;
+
+  useEffect(() => {
+    if (portfoliosQuery.data) {
+      portfolioActions.setPortfolios(portfoliosQuery.data);
+    }
+  }, [portfoliosQuery.data]);
 
   async function handleCreatePortfolio(name: string) {
     setNewPortfolioOpen(false);
@@ -125,13 +136,13 @@ function PortfolioSidebar() {
             </SidebarGroupAction>
             <SidebarGroupContent>
               <SidebarMenu>
-                {portfolios.length === 0
+                {isLoading
                   ? Array.from({ length: 8 }, (_, index) => (
                       <SidebarMenuItem key={`skeleton-item-${index + 1}`}>
                         <SidebarMenuSkeleton />
                       </SidebarMenuItem>
                     ))
-                  : portfolios.map((portfolio) => (
+                  : portfolios?.map((portfolio) => (
                       <SidebarMenuItem key={portfolio.id}>
                         <SidebarMenuButton asChild className='cursor-pointer'>
                           <Link

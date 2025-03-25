@@ -11,7 +11,7 @@ import type { ReactNode } from 'react';
 
 import { DefaultCatchBoundary } from '@/components/DefaultCatchBoundary';
 import { NotFound } from '@/components/NotFound';
-import { ThemeProvider } from '@/components/ThemeProvider';
+import { ThemeProvider } from '@/components/layout/ThemeProvider';
 
 import appCss from '@/styles/app.css?url';
 
@@ -89,7 +89,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
-      <body className='bg-background text-foreground text-sans h-full w-full antialiased'>
+      <body className='text-sans h-full w-full antialiased'>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
           {children}
         </ThemeProvider>

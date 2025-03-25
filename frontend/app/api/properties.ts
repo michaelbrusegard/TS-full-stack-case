@@ -8,7 +8,7 @@ type PaginatedPropertyList = components['schemas']['PaginatedPropertyList'];
 const BACKEND_API_URL = process.env.BACKEND_API_URL ?? 'http://localhost:8000';
 
 function getPropertyByIdQueryOptions(id: number) {
-  return queryOptions({
+  return queryOptions<Property>({
     queryKey: ['properties', id],
     queryFn: async () => {
       const response = await fetch(`${BACKEND_API_URL}/api/properties/${id}/`);
@@ -23,7 +23,7 @@ function getPropertyByIdQueryOptions(id: number) {
 function getPropertiesByBboxQueryOptions(
   bbox: [number, number, number, number],
 ) {
-  return queryOptions({
+  return queryOptions<PaginatedPropertyList>({
     queryKey: ['properties', 'bbox', bbox],
     queryFn: async () => {
       const bboxString = bbox.join(',');
@@ -43,7 +43,7 @@ function getPropertiesByPortfolioQueryOptions(
   page?: number,
   pageSize?: number,
 ) {
-  return queryOptions({
+  return queryOptions<PaginatedPropertyList>({
     queryKey: ['properties', 'portfolio', portfolioId, { page, pageSize }],
     queryFn: async () => {
       const params = new URLSearchParams();
