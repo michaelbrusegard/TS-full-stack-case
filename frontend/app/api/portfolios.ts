@@ -8,16 +8,18 @@ type UpdatePortfolio = Pick<Portfolio, 'name'>;
 
 const BACKEND_API_URL = process.env.BACKEND_API_URL ?? 'http://localhost:8000';
 
-const portfoliosQueryOptions = queryOptions({
-  queryKey: ['portfolios'],
-  queryFn: async () => {
-    const response = await fetch(`${BACKEND_API_URL}/api/portfolios/`);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json() as Promise<Portfolio[]>;
-  },
-});
+function getPortfoliosQueryOptions() {
+  return queryOptions({
+    queryKey: ['portfolios'],
+    queryFn: async () => {
+      const response = await fetch(`${BACKEND_API_URL}/api/portfolios/`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json() as Promise<Portfolio[]>;
+    },
+  });
+}
 
 function useCreatePortfolioMutation() {
   return useMutation({
@@ -73,7 +75,7 @@ function useDeletePortfolioMutation() {
 }
 
 export {
-  portfoliosQueryOptions,
+  getPortfoliosQueryOptions,
   useDeletePortfolioMutation,
   useCreatePortfolioMutation,
   useUpdatePortfolioMutation,

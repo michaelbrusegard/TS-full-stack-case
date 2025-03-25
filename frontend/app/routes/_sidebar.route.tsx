@@ -1,4 +1,4 @@
-import { portfoliosQueryOptions } from '@/api/portfolios';
+import { getPortfoliosQueryOptions } from '@/api/portfolios';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute } from '@tanstack/react-router';
 import { useEffect } from 'react';
@@ -11,12 +11,12 @@ import { portfolioActions } from '@/stores/portfolios';
 
 export const Route = createFileRoute('/_sidebar')({
   loader: ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(portfoliosQueryOptions),
+    queryClient.ensureQueryData(getPortfoliosQueryOptions()),
   component: LayoutComponent,
 });
 
 function LayoutComponent() {
-  const portfoliosQuery = useSuspenseQuery(portfoliosQueryOptions);
+  const portfoliosQuery = useSuspenseQuery(getPortfoliosQueryOptions());
 
   useEffect(() => {
     portfolioActions.setPortfolios(portfoliosQuery.data);
