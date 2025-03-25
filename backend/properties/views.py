@@ -19,6 +19,9 @@ class PortfolioViewSet(viewsets.ModelViewSet):
     throttle_classes = [PropertyRateThrottle]
     pagination_class = None
 
+    def get_queryset(self):
+        return Portfolio.objects.prefetch_related('properties').all()
+
 class PropertyViewSet(viewsets.ModelViewSet):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
