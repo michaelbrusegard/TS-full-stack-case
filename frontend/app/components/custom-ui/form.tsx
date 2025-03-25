@@ -11,6 +11,13 @@ import { Spinner } from '@/components/custom-ui/spinner';
 import { Button, type buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
 import { cn } from '@/lib/utils';
@@ -141,31 +148,28 @@ function TextAreaField({ className, label, ...props }: TextAreaFieldProps) {
   );
 }
 
-const DEFAULT_VIEW_STATE = {
-  latitude: 0,
-  longitude: 0,
-  zoom: 1,
-} as const;
-
 type Location = {
-  latitude: number;
   longitude: number;
+  latitude: number;
 };
 
 type MapFieldProps = {
   label: string;
   className?: string;
-  initialViewState?: {
-    latitude: number;
-    longitude: number;
-    zoom: number;
-  };
+  zoom?: number;
+  coordinates?: Location;
 };
+
+const DEFAULT_COORDINATES: Location = {
+  longitude: 0,
+  latitude: 0,
+} as const;
 
 function MapField({
   label,
   className,
-  initialViewState = DEFAULT_VIEW_STATE,
+  zoom = 1,
+  coordinates = DEFAULT_COORDINATES,
 }: MapFieldProps) {
   const field = useFieldContext<Location>();
 
@@ -182,12 +186,16 @@ function MapField({
   return (
     <BaseField label={label} className={className}>
       <div className='h-[400px] w-full rounded-md border'>
-        <BaseMap initialViewState={initialViewState}>
+        <BaseMap
+          initialViewState={{
+            zoom,
+            longitude: coordinates.longitude,
+            latitude: coordinates.latitude,
+          }}
+        >
           <Marker
-            longitude={
-              field.state.value?.longitude ?? initialViewState.longitude
-            }
-            latitude={field.state.value?.latitude ?? initialViewState.latitude}
+            longitude={field.state.value?.longitude ?? coordinates.longitude}
+            latitude={field.state.value?.latitude ?? coordinates.latitude}
             anchor='bottom'
             draggable
             onDrag={onMarkerDrag}
@@ -273,6 +281,51 @@ function SubmitButton({ children, className, ...props }: SubmitButtonProps) {
   );
 }
 
+type SelectOption = {
+  label: string;
+  value: string;
+};
+
+type SelectFieldProps = {
+  label: string;
+  className?: string;
+  placeholder?: string;
+  options: SelectOption[];
+  required?: boolean;
+};
+
+function SelectField({
+  label,
+  className,
+  placeholder = 'Select an option',
+  options,
+  required = true,
+}: SelectFieldProps) {
+  const field = useFieldContext<string>();
+
+  return (
+    <BaseField label={label} className={className}>
+      <Select
+        value={field.state.value ?? ''}
+        onValueChange={field.handleChange}
+        required={required}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {!required && <SelectItem value=''>None</SelectItem>}
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </BaseField>
+  );
+}
+
 const { useAppForm } = createFormHook({
   fieldComponents: {
     TextField,
@@ -280,6 +333,7 @@ const { useAppForm } = createFormHook({
     TextAreaField,
     MapField,
     CurrencyField,
+    SelectField,
   },
   formComponents: {
     SubmitButton,
