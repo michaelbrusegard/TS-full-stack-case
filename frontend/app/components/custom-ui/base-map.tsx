@@ -17,7 +17,11 @@ function BaseMap({ children, ...props }: BaseMapProps) {
   return (
     <Map
       mapStyle={mapStyle}
-      style={{ width: '100%', height: '100%' }}
+      style={{
+        width: '100%',
+        borderRadius: 'var(--radius-md)',
+        height: '100%',
+      }}
       {...props}
     >
       <NavigationControl position='bottom-right' />

@@ -47,6 +47,10 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
     },
     validators: {
       onChange: propertyFormSchema,
+      // onChange: ({ formApi }) =>
+      //   formApi.state.submissionAttempts > 1 ? propertyFormSchema : undefined,
+      // onSubmit: ({ formApi }) =>
+      //   formApi.state.submissionAttempts === 1 ? propertyFormSchema : undefined,
     },
     onSubmit: ({ value }) => {
       return onSubmit(value);
@@ -54,7 +58,7 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
   });
   return (
     <form
-      className='space-y-8'
+      className='mx-auto max-w-3xl space-y-8'
       onSubmit={(e) => {
         e.preventDefault();
         void form.handleSubmit();

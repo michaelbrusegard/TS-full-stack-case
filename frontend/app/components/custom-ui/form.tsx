@@ -2,7 +2,7 @@ import { Slot } from '@radix-ui/react-slot';
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 import type { VariantProps } from 'class-variance-authority';
 import { MapPinIcon, XIcon } from 'lucide-react';
-import { useCallback, useId } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import type { MarkerDragEvent } from 'react-map-gl/maplibre';
 import { Marker } from 'react-map-gl/maplibre';
 
@@ -217,67 +217,71 @@ function CurrencyField({
   ...props
 }: CurrencyFieldProps) {
   const field = useFieldContext<number>();
+  const [displayValue, setDisplayValue] = useState(() =>
+    field.state.value ? formatCurrency(field.state.value) : '',
+  );
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const formatCurrency = (value: number) => {
-    if (isNaN(value)) return '';
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
-  };
+  const formatCurrency = useCallback(
+    (value: number) => {
+      if (isNaN(value) || value === null) return '';
+      return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency: currency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(value);
+    },
+    [currency, locale],
+  );
 
-  const parseCurrency = (value: string) => {
-    const cleaned = value.replace(/[^0-9.]/g, '');
-    const parts = cleaned.split('.');
-    const result = parts[0] + (parts.length > 1 ? '.' + parts[1] : '');
-    return result ? Number(result) : 0;
-  };
+  const parseNumber = useCallback((value: string) => {
+    const normalizedValue = value.replace(/,/g, '.');
+    const cleanValue = normalizedValue.replace(/[^0-9.-]/g, '');
+    return cleanValue ? Number(cleanValue) : 0;
+  }, []);
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const rawValue = e.target.value;
+      setDisplayValue(rawValue);
+      const numericValue = parseNumber(rawValue);
+      field.handleChange(numericValue);
+    },
+    [field, parseNumber],
+  );
+
+  const handleFocus = useCallback(() => {
+    const numericValue = field.state.value ?? 0;
+    setDisplayValue(numericValue.toString());
+  }, [field.state.value]);
+
+  const handleBlur = useCallback(() => {
+    field.handleBlur();
+    const currentValue = field.state.value ?? 0;
+    setDisplayValue(formatCurrency(currentValue));
+  }, [field, formatCurrency]);
+
+  useEffect(() => {
+    if (document.activeElement !== inputRef.current) {
+      requestAnimationFrame(() => {
+        setDisplayValue(
+          field.state.value ? formatCurrency(field.state.value) : '',
+        );
+      });
+    }
+  }, [field.state.value, formatCurrency]);
 
   return (
     <BaseField label={label} className={className}>
       <Input
+        ref={inputRef}
         type='text'
-        inputMode='decimal'
-        value={
-          field.state.value !== undefined
-            ? formatCurrency(field.state.value)
-            : ''
-        }
-        onChange={(e) => {
-          const value = parseCurrency(e.target.value);
-          field.handleChange(value);
-        }}
-        onKeyDown={(e) => {
-          if (
-            [
-              'Backspace',
-              'Delete',
-              'Tab',
-              'Escape',
-              'Enter',
-              '.',
-              'ArrowLeft',
-              'ArrowRight',
-              'ArrowUp',
-              'ArrowDown',
-            ].includes(e.key) ||
-            (e.key === 'a' && (e.ctrlKey || e.metaKey)) ||
-            (e.key === 'c' && (e.ctrlKey || e.metaKey)) ||
-            (e.key === 'x' && (e.ctrlKey || e.metaKey))
-          ) {
-            return;
-          }
-          if (!/[0-9]/.test(e.key)) {
-            e.preventDefault();
-          }
-        }}
-        onBlur={(e) => {
-          field.handleBlur();
-          const value = parseCurrency(e.target.value);
-          field.handleChange(value);
-        }}
+        value={displayValue}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        placeholder={`0,00 ${currency}`}
         {...props}
       />
     </BaseField>
