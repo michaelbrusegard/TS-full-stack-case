@@ -10,21 +10,13 @@ import { Button } from '@/components/ui/button';
 export const Route = createFileRoute('/properties/new/')({
   loader: ({ context: { queryClient } }) =>
     queryClient.ensureQueryData(getPortfoliosQueryOptions()),
-  component: NewProperty,
+  component: NewPropertyPage,
 });
 
-function NewProperty() {
+function NewPropertyPage() {
   const navigate = useNavigate();
   const portfoliosQuery = useQuery(getPortfoliosQueryOptions());
   const createPropertyMutation = useCreatePropertyMutation();
-
-  function handleBack() {
-    if (window.history.length > 2) {
-      window.history.back();
-    } else {
-      void navigate({ to: '/' });
-    }
-  }
 
   return (
     <div className='container mx-auto space-y-6 p-6'>
@@ -32,7 +24,7 @@ function NewProperty() {
         <Button
           variant='ghost'
           size='icon'
-          onClick={handleBack}
+          onClick={() => void navigate({ to: '/' })}
           className='shrink-0'
         >
           <ArrowLeftIcon className='h-4 w-4' />
@@ -43,7 +35,6 @@ function NewProperty() {
       <PropertyForm
         portfolios={portfoliosQuery.data ?? []}
         onSubmit={(values) => {
-          console.log(values);
           const mutationData = {
             type: 'Feature' as const,
             geometry: {
@@ -55,7 +46,7 @@ function NewProperty() {
             },
             properties: {
               name: values.name,
-              portfolio: values.portfolioId === 0 ? null : values.portfolioId,
+              portfolio: Number(values.portfolioId),
               address: values.address,
               zip_code: values.zipCode,
               city: values.city,

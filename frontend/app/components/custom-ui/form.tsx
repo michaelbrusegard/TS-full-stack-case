@@ -1,7 +1,7 @@
 import { Slot } from '@radix-ui/react-slot';
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 import type { VariantProps } from 'class-variance-authority';
-import { MapPinIcon } from 'lucide-react';
+import { MapPinIcon, XIcon } from 'lucide-react';
 import { useCallback, useId } from 'react';
 import type { MarkerDragEvent } from 'react-map-gl/maplibre';
 import { Marker } from 'react-map-gl/maplibre';
@@ -219,6 +219,7 @@ function CurrencyField({
   const field = useFieldContext<number>();
 
   const formatCurrency = (value: number) => {
+    if (isNaN(value)) return '';
     return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: currency,
@@ -228,8 +229,10 @@ function CurrencyField({
   };
 
   const parseCurrency = (value: string) => {
-    const cleaned = value.replace(/[^0-9.-]/g, '');
-    return Number(cleaned) || 0;
+    const cleaned = value.replace(/[^0-9.]/g, '');
+    const parts = cleaned.split('.');
+    const result = parts[0] + (parts.length > 1 ? '.' + parts[1] : '');
+    return result ? Number(result) : 0;
   };
 
   return (
@@ -237,11 +240,102 @@ function CurrencyField({
       <Input
         type='text'
         inputMode='decimal'
-        value={field.state.value ? formatCurrency(field.state.value) : ''}
-        onChange={(e) => field.handleChange(parseCurrency(e.target.value))}
-        onBlur={field.handleBlur}
+        value={
+          field.state.value !== undefined
+            ? formatCurrency(field.state.value)
+            : ''
+        }
+        onChange={(e) => {
+          const value = parseCurrency(e.target.value);
+          field.handleChange(value);
+        }}
+        onKeyDown={(e) => {
+          if (
+            [
+              'Backspace',
+              'Delete',
+              'Tab',
+              'Escape',
+              'Enter',
+              '.',
+              'ArrowLeft',
+              'ArrowRight',
+              'ArrowUp',
+              'ArrowDown',
+            ].includes(e.key) ||
+            (e.key === 'a' && (e.ctrlKey || e.metaKey)) ||
+            (e.key === 'c' && (e.ctrlKey || e.metaKey)) ||
+            (e.key === 'x' && (e.ctrlKey || e.metaKey))
+          ) {
+            return;
+          }
+          if (!/[0-9]/.test(e.key)) {
+            e.preventDefault();
+          }
+        }}
+        onBlur={(e) => {
+          field.handleBlur();
+          const value = parseCurrency(e.target.value);
+          field.handleChange(value);
+        }}
         {...props}
       />
+    </BaseField>
+  );
+}
+
+type SelectOption = {
+  label: string;
+  value: string;
+};
+
+type SelectFieldProps = {
+  label: string;
+  className?: string;
+  placeholder?: string;
+  options: SelectOption[];
+  required?: boolean;
+};
+
+function SelectField({
+  label,
+  className,
+  placeholder = 'Select an option',
+  options,
+  required = true,
+}: SelectFieldProps) {
+  const field = useFieldContext<string>();
+
+  return (
+    <BaseField label={label} className={className}>
+      <div className='flex gap-2'>
+        <Select
+          value={field.state.value ?? undefined}
+          onValueChange={field.handleChange}
+          required={required}
+        >
+          <SelectTrigger className='w-full'>
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent>
+            {options.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {!required && field.state.value && (
+          <Button
+            type='button'
+            variant='outline'
+            size='icon'
+            onClick={() => field.handleChange('')}
+          >
+            <XIcon className='h-4 w-4' />
+          </Button>
+        )}
+      </div>
     </BaseField>
   );
 }
@@ -281,51 +375,6 @@ function SubmitButton({
         </Button>
       )}
     </form.Subscribe>
-  );
-}
-
-type SelectOption = {
-  label: string;
-  value: string;
-};
-
-type SelectFieldProps = {
-  label: string;
-  className?: string;
-  placeholder?: string;
-  options: SelectOption[];
-  required?: boolean;
-};
-
-function SelectField({
-  label,
-  className,
-  placeholder = 'Select an option',
-  options,
-  required = true,
-}: SelectFieldProps) {
-  const field = useFieldContext<string>();
-
-  return (
-    <BaseField label={label} className={className}>
-      <Select
-        value={field.state.value ?? ''}
-        onValueChange={field.handleChange}
-        required={required}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {!required && <SelectItem value=''>None</SelectItem>}
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </BaseField>
   );
 }
 

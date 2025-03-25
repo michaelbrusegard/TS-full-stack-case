@@ -4,7 +4,7 @@ import {
 } from '@/api/properties';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Link, useNavigate, useParams } from '@tanstack/react-router';
+import { Link, useNavigate, useParams, notFound } from '@tanstack/react-router';
 import {
   ArrowLeftIcon,
   MapPinIcon,
@@ -43,12 +43,12 @@ function PropertyDetailsPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const navigate = useNavigate();
   const { propertyId } = useParams({ from: '/properties/$propertyId/' });
-  const { data: property } = useSuspenseQuery(
+  const propertyQuery = useSuspenseQuery(
     getPropertyByIdQueryOptions(Number(propertyId)),
   );
   const deletePropertyMutation = useDeletePropertyMutation();
 
-  if (!property?.properties) return null;
+  if (!propertyQuery.data?.properties) throw notFound();
 
   const {
     name,
@@ -59,9 +59,9 @@ function PropertyDetailsPage() {
     relevant_risks = 0,
     handled_risks = 0,
     total_financial_risk = 0,
-  } = property.properties;
+  } = propertyQuery.data.properties;
 
-  const coordinates = property.geometry?.coordinates;
+  const coordinates = propertyQuery.data.geometry?.coordinates;
   const riskRatio = handled_risks / relevant_risks;
   const riskColor =
     riskRatio === 1
@@ -78,14 +78,6 @@ function PropertyDetailsPage() {
     });
   }
 
-  function handleBack() {
-    if (window.history.length > 2) {
-      window.history.back();
-    } else {
-      void navigate({ to: '/' });
-    }
-  }
-
   return (
     <div className='container mx-auto space-y-6 p-6'>
       <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
@@ -93,7 +85,7 @@ function PropertyDetailsPage() {
           <Button
             variant='ghost'
             size='icon'
-            onClick={handleBack}
+            onClick={() => void navigate({ to: '/' })}
             className='shrink-0'
           >
             <ArrowLeftIcon className='h-4 w-4' />

@@ -1,7 +1,15 @@
 import { getPortfoliosQueryOptions } from '@/api/portfolios';
-import { useCreatePropertyMutation } from '@/api/properties';
-import { useQuery } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import {
+  getPropertyByIdQueryOptions,
+  useUpdatePropertyMutation,
+} from '@/api/properties';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import {
+  createFileRoute,
+  notFound,
+  useNavigate,
+  useParams,
+} from '@tanstack/react-router';
 import { ArrowLeftIcon } from 'lucide-react';
 
 import { PropertyForm } from '@/components/properties/PropertyForm';
@@ -10,21 +18,19 @@ import { Button } from '@/components/ui/button';
 export const Route = createFileRoute('/properties/$propertyId/edit/')({
   loader: ({ context: { queryClient } }) =>
     queryClient.ensureQueryData(getPortfoliosQueryOptions()),
-  component: NewProperty,
+  component: UpdatePropertyPage,
 });
 
-function NewProperty() {
+function UpdatePropertyPage() {
   const navigate = useNavigate();
-  const portfoliosQuery = useQuery(getPortfoliosQueryOptions());
-  const createPropertyMutation = useCreatePropertyMutation();
+  const portfoliosQuery = useSuspenseQuery(getPortfoliosQueryOptions());
+  const { propertyId } = useParams({ from: '/properties/$propertyId/edit/' });
+  const propertyQuery = useSuspenseQuery(
+    getPropertyByIdQueryOptions(Number(propertyId)),
+  );
+  const updatePropertyMutation = useUpdatePropertyMutation();
 
-  function handleBack() {
-    if (window.history.length > 2) {
-      window.history.back();
-    } else {
-      void navigate({ to: '/' });
-    }
-  }
+  if (!propertyQuery.data?.properties) throw notFound();
 
   return (
     <div className='container mx-auto space-y-6 p-6'>
@@ -32,20 +38,49 @@ function NewProperty() {
         <Button
           variant='ghost'
           size='icon'
-          onClick={handleBack}
+          onClick={() => void navigate({ to: '/' })}
           className='shrink-0'
         >
           <ArrowLeftIcon className='h-4 w-4' />
         </Button>
-        <h1 className='text-xl-3xl-clamp font-bold'>Update Property</h1>
+        <h1 className='text-xl-3xl-clamp font-bold'>Edit Property</h1>
       </div>
 
       <PropertyForm
-        portfolios={portfoliosQuery.data ?? []}
+        portfolios={portfoliosQuery.data}
         onSubmit={(values) => {
-          createPropertyMutation.mutate(values, {
-            onSuccess: () => {
-              void navigate({ to: '/' });
+          const mutationData = {
+            type: 'Feature' as const,
+            geometry: {
+              type: 'Point' as const,
+              coordinates: [
+                values.coordinates.longitude,
+                values.coordinates.latitude,
+              ],
+            },
+            properties: {
+              id: propertyQuery.data.id,
+              name: values.name,
+              portfolio: Number(values.portfolioId),
+              address: values.address,
+              zip_code: values.zipCode,
+              city: values.city,
+              estimated_value: values.estimatedValue,
+              relevant_risks: values.relevantRisks,
+              handled_risks: values.handledRisks,
+              total_financial_risk: values.financialRisk,
+            },
+          };
+
+          updatePropertyMutation.mutate(mutationData, {
+            onError: (error) => {
+              throw error;
+            },
+            onSuccess: (data) => {
+              void navigate({
+                to: '/properties/$propertyId',
+                params: { propertyId: String(data?.id) },
+              });
             },
           });
         }}

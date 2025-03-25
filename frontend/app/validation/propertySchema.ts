@@ -1,9 +1,12 @@
 import { z } from 'zod';
 
 const propertyFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  portfolioId: z.number({
-    invalid_type_error: 'Portfolio must be a number',
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .max(100, 'Name must be less than 100 characters'),
+  portfolioId: z.string({
+    invalid_type_error: 'Portfolio must be a string',
   }),
   address: z
     .string()

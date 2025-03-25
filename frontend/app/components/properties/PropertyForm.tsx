@@ -31,17 +31,15 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
 
   const form = useAppForm({
     defaultValues: {
-      portfolioId: property?.properties?.portfolio ?? 0,
+      portfolioId: String(property?.properties?.portfolio ?? ''),
       name: property?.properties?.name ?? '',
       address: property?.properties?.address ?? '',
       zipCode: property?.properties?.zip_code ?? '',
       city: property?.properties?.city ?? '',
-      coordinates: property?.geometry?.coordinates
-        ? {
-            longitude: property.geometry.coordinates[0] ?? 0,
-            latitude: property.geometry.coordinates[1] ?? 0,
-          }
-        : { longitude: 0, latitude: 0 },
+      coordinates: {
+        longitude: property?.geometry?.coordinates?.[0] ?? 0,
+        latitude: property?.geometry?.coordinates?.[1] ?? 0,
+      },
       estimatedValue: property?.properties?.estimated_value ?? 0,
       relevantRisks: property?.properties?.relevant_risks ?? 0,
       handledRisks: property?.properties?.handled_risks ?? 0,
@@ -70,7 +68,11 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
         <form.AppField
           name='portfolioId'
           children={(field) => (
-            <field.SelectField label='Portfolio' options={portfolioOptions} />
+            <field.SelectField
+              label='Portfolio'
+              options={portfolioOptions}
+              required={false}
+            />
           )}
         />
         <form.AppField
