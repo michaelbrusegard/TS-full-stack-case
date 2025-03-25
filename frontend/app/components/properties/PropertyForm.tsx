@@ -32,6 +32,7 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
   const form = useAppForm({
     defaultValues: {
       portfolioId: property?.properties?.portfolio ?? 0,
+      name: property?.properties?.name ?? '',
       address: property?.properties?.address ?? '',
       zipCode: property?.properties?.zip_code ?? '',
       city: property?.properties?.city ?? '',
@@ -62,6 +63,10 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
       }}
     >
       <form.AppForm>
+        <form.AppField
+          name='name'
+          children={(field) => <field.TextField label='Name' />}
+        />
         <form.AppField
           name='portfolioId'
           children={(field) => (

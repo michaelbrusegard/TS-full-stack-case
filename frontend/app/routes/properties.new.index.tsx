@@ -1,4 +1,5 @@
 import { getPortfoliosQueryOptions } from '@/api/portfolios';
+import { useCreatePropertyMutation } from '@/api/properties';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeftIcon } from 'lucide-react';
@@ -15,6 +16,7 @@ export const Route = createFileRoute('/properties/new/')({
 function NewProperty() {
   const navigate = useNavigate();
   const portfoliosQuery = useQuery(getPortfoliosQueryOptions());
+  const createPropertyMutation = useCreatePropertyMutation();
 
   function handleBack() {
     if (window.history.length > 2) {
@@ -42,7 +44,39 @@ function NewProperty() {
         portfolios={portfoliosQuery.data ?? []}
         onSubmit={(values) => {
           console.log(values);
-          alert('Submitted');
+          const mutationData = {
+            type: 'Feature' as const,
+            geometry: {
+              type: 'Point' as const,
+              coordinates: [
+                values.coordinates.longitude,
+                values.coordinates.latitude,
+              ],
+            },
+            properties: {
+              name: values.name,
+              portfolio: values.portfolioId === 0 ? null : values.portfolioId,
+              address: values.address,
+              zip_code: values.zipCode,
+              city: values.city,
+              estimated_value: values.estimatedValue,
+              relevant_risks: values.relevantRisks,
+              handled_risks: values.handledRisks,
+              total_financial_risk: values.financialRisk,
+            },
+          };
+
+          createPropertyMutation.mutate(mutationData, {
+            onError: (error) => {
+              throw error;
+            },
+            onSuccess: (data) => {
+              void navigate({
+                to: '/properties/$propertyId',
+                params: { propertyId: String(data?.id) },
+              });
+            },
+          });
         }}
       />
     </div>
