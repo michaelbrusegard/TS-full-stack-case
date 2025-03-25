@@ -1,7 +1,15 @@
+import {
+  useCreatePortfolioMutation,
+  useDeletePortfolioMutation,
+  useUpdatePortfolioMutation,
+} from '@/api/portfolios';
 import { Link, useParams } from '@tanstack/react-router';
 import { useStore } from '@tanstack/react-store';
 import { PlusIcon } from 'lucide-react';
+import { useState } from 'react';
 
+import { PortfolioDialog } from '@/components/portfolios/PortfolioDialog';
+import { PortfolioOptionsDropdown } from '@/components/portfolios/PortfolioOptionsDropdown';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Sidebar,
@@ -20,11 +28,63 @@ import {
 
 import { cn } from '@/lib/utils';
 
-import { portfoliosStore } from '@/stores/portfolios';
+import { portfolioActions, portfoliosStore } from '@/stores/portfolios';
 
 function PortfolioSidebar() {
   const portfolios = useStore(portfoliosStore, (state) => state.portfolios);
   const looseParams = useParams({ strict: false });
+  const [newPortfolioOpen, setNewPortfolioOpen] = useState(false);
+
+  const createPortfolioMutation = useCreatePortfolioMutation();
+  const updatePortfolioMutation = useUpdatePortfolioMutation();
+  const deletePortfolioMutation = useDeletePortfolioMutation();
+
+  async function handleCreatePortfolio(name: string) {
+    setNewPortfolioOpen(false);
+    createPortfolioMutation.mutate(
+      { name },
+      {
+        onSuccess: (newPortfolio) => {
+          portfolioActions.addPortfolio(newPortfolio);
+        },
+      },
+    );
+  }
+
+  function handleRenamePortfolio(id: number, name: string) {
+    const originalPortfolio = portfolios.find((p) => p.id === id);
+    if (!originalPortfolio) return;
+
+    portfolioActions.updatePortfolio({
+      ...originalPortfolio,
+      name,
+    });
+
+    updatePortfolioMutation.mutate(
+      { id, name },
+      {
+        onSuccess: (updatedPortfolio) => {
+          portfolioActions.updatePortfolio(updatedPortfolio);
+        },
+        onError: () => {
+          portfolioActions.updatePortfolio(originalPortfolio);
+        },
+      },
+    );
+  }
+
+  function handleDeletePortfolio(id: number) {
+    const originalPortfolio = portfolios.find((p) => p.id === id);
+    if (!originalPortfolio) return;
+
+    portfolioActions.deletePortfolio(id);
+
+    deletePortfolioMutation.mutate(id, {
+      onError: () => {
+        portfolioActions.addPortfolio(originalPortfolio);
+      },
+    });
+  }
 
   return (
     <Sidebar>
@@ -36,6 +96,7 @@ function PortfolioSidebar() {
             <SidebarGroupAction
               title='New Portfolio'
               aria-label='New Portfolio'
+              onClick={() => setNewPortfolioOpen(true)}
             >
               <PlusIcon aria-hidden='true' />
             </SidebarGroupAction>
@@ -65,6 +126,11 @@ function PortfolioSidebar() {
                             {portfolio.name}
                           </Link>
                         </SidebarMenuButton>
+                        <PortfolioOptionsDropdown
+                          portfolio={portfolio}
+                          onRename={handleRenamePortfolio}
+                          onDelete={handleDeletePortfolio}
+                        />
                       </SidebarMenuItem>
                     ))}
               </SidebarMenu>
@@ -73,6 +139,13 @@ function PortfolioSidebar() {
         </ScrollArea>
       </SidebarContent>
       <SidebarRail />
+      <PortfolioDialog
+        open={newPortfolioOpen}
+        onOpenChange={setNewPortfolioOpen}
+        title='Create Portfolio'
+        isLoading={createPortfolioMutation.isPending}
+        onSubmit={handleCreatePortfolio}
+      />
     </Sidebar>
   );
 }

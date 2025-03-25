@@ -61,7 +61,7 @@ function useDeletePortfolioMutation() {
   return useMutation({
     mutationKey: ['deletePortfolio'],
     mutationFn: async (id: number) => {
-      const response = await fetch(`${BACKEND_API_URL}/portfolios/${id}/`, {
+      const response = await fetch(`${BACKEND_API_URL}/api/portfolios/${id}/`, {
         method: 'DELETE',
       });
       if (!response.ok) {
