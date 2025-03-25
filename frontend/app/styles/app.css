@@ -76,13 +76,10 @@
 }
 
 @theme inline {
-  --font-sans:
-    'Recursive Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-sans: 'Recursive', ui-sans-serif, system-ui, sans-serif;
   --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
   --font-mono:
-    'Recursive Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    'Liberation Mono', 'Courier New', monospace;
+    'Recursive', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -136,4 +133,66 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.maplibregl-ctrl-group {
+  background: oklch(1 0 0) !important;
+  border: 1px solid oklch(0.922 0 0) !important;
+}
+
+.dark .maplibregl-ctrl-group {
+  background: oklch(0.145 0 0) !important;
+  border: 1px solid oklch(0.269 0 0) !important;
+}
+
+.maplibregl-ctrl-group button {
+  background-color: oklch(1 0 0) !important;
+  color: oklch(0.145 0 0) !important;
+}
+
+.dark .maplibregl-ctrl-group button {
+  background-color: oklch(0.145 0 0) !important;
+  color: oklch(0.985 0 0) !important;
+}
+
+.maplibregl-ctrl-group button:hover {
+  background-color: oklch(0.97 0 0) !important;
+}
+
+.dark .maplibregl-ctrl-group button:hover {
+  background-color: oklch(0.269 0 0) !important;
+}
+
+.maplibregl-ctrl-group > button + button {
+  border-top: 1px solid oklch(0.922 0 0) !important;
+}
+
+.dark .maplibregl-ctrl-group > button + button {
+  border-top: 1px solid oklch(0.269 0 0) !important;
+}
+
+.maplibregl-ctrl-group {
+  border-radius: 0.625rem !important;
+  overflow: hidden !important;
+}
+
+.maplibregl-ctrl-group button.maplibregl-ctrl-zoom-in .maplibregl-ctrl-icon,
+.maplibregl-ctrl-group button.maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon,
+.maplibregl-ctrl-group button.maplibregl-ctrl-compass .maplibregl-ctrl-icon {
+  filter: invert(0) opacity(65%) !important;
+}
+
+.dark
+  .maplibregl-ctrl-group
+  button.maplibregl-ctrl-zoom-in
+  .maplibregl-ctrl-icon,
+.dark
+  .maplibregl-ctrl-group
+  button.maplibregl-ctrl-zoom-out
+  .maplibregl-ctrl-icon,
+.dark
+  .maplibregl-ctrl-group
+  button.maplibregl-ctrl-compass
+  .maplibregl-ctrl-icon {
+  filter: invert(1) opacity(65%) !important;
 }

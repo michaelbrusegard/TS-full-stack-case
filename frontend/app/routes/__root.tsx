@@ -37,8 +37,17 @@ export const Route = createRootRouteWithContext<{
     ],
     links: [
       {
+        rel: 'preconnect',
+        href: 'https://fonts.googleapis.com',
+      },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossOrigin: 'anonymous',
+      },
+      {
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Recursive:wght@300..800&display=swap',
+        href: 'https://fonts.googleapis.com/css2?family=Recursive:wght@300..1000&display=swap',
       },
       {
         rel: 'stylesheet',
@@ -57,6 +66,10 @@ export const Route = createRootRouteWithContext<{
       },
       { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
       { rel: 'icon', href: '/favicon.ico' },
+      {
+        rel: 'stylesheet',
+        href: 'https://unpkg.com/maplibre-gl@5.2.0/dist/maplibre-gl.css',
+      },
     ],
   }),
   errorComponent: (props) => {
