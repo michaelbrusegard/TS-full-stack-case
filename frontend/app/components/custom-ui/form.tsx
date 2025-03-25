@@ -1,8 +1,12 @@
 import { Slot } from '@radix-ui/react-slot';
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 import type { VariantProps } from 'class-variance-authority';
-import { useId } from 'react';
+import { MapPinIcon } from 'lucide-react';
+import { useCallback, useId } from 'react';
+import type { MarkerDragEvent } from 'react-map-gl/maplibre';
+import { Marker } from 'react-map-gl/maplibre';
 
+import { BaseMap } from '@/components/custom-ui/base-map';
 import { Spinner } from '@/components/custom-ui/spinner';
 import { Button, type buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -137,6 +141,65 @@ function TextAreaField({ className, label, ...props }: TextAreaFieldProps) {
   );
 }
 
+const DEFAULT_VIEW_STATE = {
+  latitude: 0,
+  longitude: 0,
+  zoom: 1,
+} as const;
+
+type Location = {
+  latitude: number;
+  longitude: number;
+};
+
+type MapFieldProps = {
+  label: string;
+  className?: string;
+  initialViewState?: {
+    latitude: number;
+    longitude: number;
+    zoom: number;
+  };
+};
+
+function MapField({
+  label,
+  className,
+  initialViewState = DEFAULT_VIEW_STATE,
+}: MapFieldProps) {
+  const field = useFieldContext<Location>();
+
+  const onMarkerDrag = useCallback(
+    (event: MarkerDragEvent) => {
+      field.handleChange({
+        longitude: event.lngLat.lng,
+        latitude: event.lngLat.lat,
+      });
+    },
+    [field],
+  );
+
+  return (
+    <BaseField label={label} className={className}>
+      <div className='h-[400px] w-full rounded-md border'>
+        <BaseMap initialViewState={initialViewState}>
+          <Marker
+            longitude={
+              field.state.value?.longitude ?? initialViewState.longitude
+            }
+            latitude={field.state.value?.latitude ?? initialViewState.latitude}
+            anchor='bottom'
+            draggable
+            onDrag={onMarkerDrag}
+          >
+            <MapPinIcon className='text-primary h-8 w-8 -translate-y-full hover:scale-120' />
+          </Marker>
+        </BaseMap>
+      </div>
+    </BaseField>
+  );
+}
+
 type SubmitButtonProps = Omit<React.ComponentProps<typeof Button>, 'type'> &
   VariantProps<typeof buttonVariants>;
 
@@ -169,6 +232,7 @@ const { useAppForm } = createFormHook({
     TextField,
     NumberField,
     TextAreaField,
+    MapField,
   },
   formComponents: {
     SubmitButton,

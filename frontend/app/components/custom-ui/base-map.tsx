@@ -15,7 +15,11 @@ function BaseMap({ children, ...props }: BaseMapProps) {
       : 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 
   return (
-    <Map mapStyle={mapStyle} {...props}>
+    <Map
+      mapStyle={mapStyle}
+      style={{ width: '100%', height: '100%' }}
+      {...props}
+    >
       <NavigationControl position='bottom-right' />
       {children}
     </Map>
