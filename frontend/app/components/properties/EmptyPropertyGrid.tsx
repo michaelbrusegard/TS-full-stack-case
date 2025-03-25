@@ -21,7 +21,7 @@ function EmptyPropertyGrid() {
           <Button variant='secondary' className='mt-4' asChild>
             <Link to='/properties/new'>
               <PlusIcon className='mr-2 h-4 w-4' />
-              Add Property
+              Create Property
             </Link>
           </Button>
         </CardHeader>
