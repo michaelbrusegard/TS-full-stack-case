@@ -5,9 +5,9 @@ import {
   useUpdatePortfolioMutation,
 } from '@/api/portfolios';
 import { useQuery } from '@tanstack/react-query';
-import { Link, useParams } from '@tanstack/react-router';
+import { Link, useMatches, useParams } from '@tanstack/react-router';
 import { useStore } from '@tanstack/react-store';
-import { MapIcon, PlusIcon } from 'lucide-react';
+import { BuildingIcon, MapIcon, PlusIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { PortfolioDialog } from '@/components/portfolios/PortfolioDialog';
@@ -36,6 +36,7 @@ function PortfolioSidebar() {
   const portfoliosQuery = useQuery(getPortfoliosQueryOptions());
   const portfolios = useStore(portfoliosStore, (state) => state.portfolios);
   const looseParams = useParams({ strict: false });
+  const matches = useMatches();
   const [newPortfolioOpen, setNewPortfolioOpen] = useState(false);
 
   const createPortfolioMutation = useCreatePortfolioMutation();
@@ -113,13 +114,33 @@ function PortfolioSidebar() {
                     to='/'
                     className={cn(
                       'ring-offset-background focus-visible:ring-ring flex w-full items-center gap-2 rounded-md px-2 py-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-                      !looseParams.portfolioId
+                      !matches.some(
+                        (match) => match.id === '/_sidebar/properties/',
+                      )
                         ? 'bg-accent font-semibold'
                         : 'hover:bg-accent/50',
                     )}
                   >
                     <MapIcon size={16} />
                     <span>Map</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className='cursor-pointer'>
+                  <Link
+                    to='/properties'
+                    className={cn(
+                      'ring-offset-background focus-visible:ring-ring flex w-full items-center gap-2 rounded-md px-2 py-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+                      matches.some(
+                        (match) => match.id === '/_sidebar/properties/',
+                      )
+                        ? 'bg-accent font-semibold'
+                        : 'hover:bg-accent/50',
+                    )}
+                  >
+                    <BuildingIcon size={16} />
+                    <span>All Properties</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

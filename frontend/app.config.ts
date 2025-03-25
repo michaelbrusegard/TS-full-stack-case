@@ -11,5 +11,6 @@ export default defineConfig({
         projects: ['./tsconfig.json'],
       }),
     ],
+    envDir: '../',
   },
 });

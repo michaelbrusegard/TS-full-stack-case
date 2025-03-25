@@ -4,7 +4,7 @@ import {
 } from '@/api/properties';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Link, useNavigate, useParams, notFound } from '@tanstack/react-router';
+import { Link, notFound, useNavigate, useParams } from '@tanstack/react-router';
 import {
   ArrowLeftIcon,
   MapPinIcon,
@@ -48,7 +48,7 @@ function PropertyDetailsPage() {
   );
   const deletePropertyMutation = useDeletePropertyMutation();
 
-  if (!propertyQuery.data?.properties) throw notFound();
+  if (!propertyQuery.data?.properties) return notFound();
 
   const {
     name,

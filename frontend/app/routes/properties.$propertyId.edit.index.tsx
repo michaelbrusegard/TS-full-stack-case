@@ -30,7 +30,7 @@ function UpdatePropertyPage() {
   );
   const updatePropertyMutation = useUpdatePropertyMutation();
 
-  if (!propertyQuery.data?.properties) throw notFound();
+  if (!propertyQuery.data?.properties) return notFound();
 
   return (
     <div className='container mx-auto space-y-6 p-6'>

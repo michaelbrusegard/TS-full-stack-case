@@ -5,7 +5,7 @@ import type { components } from './schema';
 type Property = components['schemas']['Property'];
 type PaginatedPropertyList = components['schemas']['PaginatedPropertyList'];
 
-const BACKEND_API_URL = process.env.BACKEND_API_URL ?? 'http://localhost:8000';
+const BACKEND_API_URL = (import.meta.env.VITE_BACKEND_API_URL as string);
 
 function getPropertyByIdQueryOptions(id: number) {
   return queryOptions<Property>({
@@ -29,6 +29,25 @@ function getPropertiesByBboxQueryOptions(
       const bboxString = bbox.join(',');
       const response = await fetch(
         `${BACKEND_API_URL}/api/properties/?in_bbox=${bboxString}`,
+      );
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json() as Promise<PaginatedPropertyList>;
+    },
+  });
+}
+
+function getPropertiesQueryOptions(page?: number, pageSize?: number) {
+  return queryOptions<PaginatedPropertyList>({
+    queryKey: ['properties', { page, pageSize }],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (page) params.append('page', page.toString());
+      if (pageSize) params.append('page_size', pageSize.toString());
+
+      const response = await fetch(
+        `${BACKEND_API_URL}/api/properties/?${params.toString()}`,
       );
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -117,6 +136,7 @@ function useDeletePropertyMutation() {
 
 export {
   getPropertyByIdQueryOptions,
+  getPropertiesQueryOptions,
   getPropertiesByBboxQueryOptions,
   getPropertiesByPortfolioQueryOptions,
   useCreatePropertyMutation,

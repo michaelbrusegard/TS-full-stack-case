@@ -15,6 +15,7 @@ import { Route as SidebarRouteImport } from './routes/_sidebar.route'
 import { Route as SidebarIndexImport } from './routes/_sidebar.index'
 import { Route as PropertiesNewIndexImport } from './routes/properties.new.index'
 import { Route as PropertiesPropertyIdIndexImport } from './routes/properties.$propertyId.index'
+import { Route as SidebarPropertiesIndexImport } from './routes/_sidebar.properties.index'
 import { Route as SidebarPortfolioIdIndexImport } from './routes/_sidebar.$portfolioId.index'
 import { Route as PropertiesPropertyIdEditIndexImport } from './routes/properties.$propertyId.edit.index'
 
@@ -41,6 +42,12 @@ const PropertiesPropertyIdIndexRoute = PropertiesPropertyIdIndexImport.update({
   id: '/properties/$propertyId/',
   path: '/properties/$propertyId/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const SidebarPropertiesIndexRoute = SidebarPropertiesIndexImport.update({
+  id: '/properties/',
+  path: '/properties/',
+  getParentRoute: () => SidebarRouteRoute,
 } as any)
 
 const SidebarPortfolioIdIndexRoute = SidebarPortfolioIdIndexImport.update({
@@ -81,6 +88,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SidebarPortfolioIdIndexImport
       parentRoute: typeof SidebarRouteImport
     }
+    '/_sidebar/properties/': {
+      id: '/_sidebar/properties/'
+      path: '/properties'
+      fullPath: '/properties'
+      preLoaderRoute: typeof SidebarPropertiesIndexImport
+      parentRoute: typeof SidebarRouteImport
+    }
     '/properties/$propertyId/': {
       id: '/properties/$propertyId/'
       path: '/properties/$propertyId'
@@ -110,11 +124,13 @@ declare module '@tanstack/react-router' {
 interface SidebarRouteRouteChildren {
   SidebarIndexRoute: typeof SidebarIndexRoute
   SidebarPortfolioIdIndexRoute: typeof SidebarPortfolioIdIndexRoute
+  SidebarPropertiesIndexRoute: typeof SidebarPropertiesIndexRoute
 }
 
 const SidebarRouteRouteChildren: SidebarRouteRouteChildren = {
   SidebarIndexRoute: SidebarIndexRoute,
   SidebarPortfolioIdIndexRoute: SidebarPortfolioIdIndexRoute,
+  SidebarPropertiesIndexRoute: SidebarPropertiesIndexRoute,
 }
 
 const SidebarRouteRouteWithChildren = SidebarRouteRoute._addFileChildren(
@@ -125,6 +141,7 @@ export interface FileRoutesByFullPath {
   '': typeof SidebarRouteRouteWithChildren
   '/': typeof SidebarIndexRoute
   '/$portfolioId': typeof SidebarPortfolioIdIndexRoute
+  '/properties': typeof SidebarPropertiesIndexRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdIndexRoute
   '/properties/new': typeof PropertiesNewIndexRoute
   '/properties/$propertyId/edit': typeof PropertiesPropertyIdEditIndexRoute
@@ -133,6 +150,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof SidebarIndexRoute
   '/$portfolioId': typeof SidebarPortfolioIdIndexRoute
+  '/properties': typeof SidebarPropertiesIndexRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdIndexRoute
   '/properties/new': typeof PropertiesNewIndexRoute
   '/properties/$propertyId/edit': typeof PropertiesPropertyIdEditIndexRoute
@@ -143,6 +161,7 @@ export interface FileRoutesById {
   '/_sidebar': typeof SidebarRouteRouteWithChildren
   '/_sidebar/': typeof SidebarIndexRoute
   '/_sidebar/$portfolioId/': typeof SidebarPortfolioIdIndexRoute
+  '/_sidebar/properties/': typeof SidebarPropertiesIndexRoute
   '/properties/$propertyId/': typeof PropertiesPropertyIdIndexRoute
   '/properties/new/': typeof PropertiesNewIndexRoute
   '/properties/$propertyId/edit/': typeof PropertiesPropertyIdEditIndexRoute
@@ -154,6 +173,7 @@ export interface FileRouteTypes {
     | ''
     | '/'
     | '/$portfolioId'
+    | '/properties'
     | '/properties/$propertyId'
     | '/properties/new'
     | '/properties/$propertyId/edit'
@@ -161,6 +181,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/$portfolioId'
+    | '/properties'
     | '/properties/$propertyId'
     | '/properties/new'
     | '/properties/$propertyId/edit'
@@ -169,6 +190,7 @@ export interface FileRouteTypes {
     | '/_sidebar'
     | '/_sidebar/'
     | '/_sidebar/$portfolioId/'
+    | '/_sidebar/properties/'
     | '/properties/$propertyId/'
     | '/properties/new/'
     | '/properties/$propertyId/edit/'
@@ -209,7 +231,8 @@ export const routeTree = rootRoute
       "filePath": "_sidebar.route.tsx",
       "children": [
         "/_sidebar/",
-        "/_sidebar/$portfolioId/"
+        "/_sidebar/$portfolioId/",
+        "/_sidebar/properties/"
       ]
     },
     "/_sidebar/": {
@@ -218,6 +241,10 @@ export const routeTree = rootRoute
     },
     "/_sidebar/$portfolioId/": {
       "filePath": "_sidebar.$portfolioId.index.tsx",
+      "parent": "/_sidebar"
+    },
+    "/_sidebar/properties/": {
+      "filePath": "_sidebar.properties.index.tsx",
       "parent": "/_sidebar"
     },
     "/properties/$propertyId/": {

@@ -6,7 +6,7 @@ type Portfolio = components['schemas']['Portfolio'];
 type NewPortfolio = Pick<Portfolio, 'name'>;
 type UpdatePortfolio = Pick<Portfolio, 'name'>;
 
-const BACKEND_API_URL = process.env.BACKEND_API_URL ?? 'http://localhost:8000';
+const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL as string;
 
 function getPortfoliosQueryOptions() {
   return queryOptions<Portfolio[]>({
