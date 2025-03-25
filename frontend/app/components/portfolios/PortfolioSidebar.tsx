@@ -5,7 +5,7 @@ import {
 } from '@/api/portfolios';
 import { Link, useParams } from '@tanstack/react-router';
 import { useStore } from '@tanstack/react-store';
-import { PlusIcon } from 'lucide-react';
+import { MapIcon, PlusIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { PortfolioDialog } from '@/components/portfolios/PortfolioDialog';
@@ -90,10 +90,30 @@ function PortfolioSidebar() {
     <Sidebar>
       <SidebarHeader className='mt-2 flex flex-row items-center gap-3 px-4 py-2'>
         <img src='/logo.png' alt='Telescope Logo' className='h-8 w-8' />
-        <span className='text-xl font-semibold'>Telescope</span>
+        <span className='font-sans text-xl font-semibold'>Telescope</span>
       </SidebarHeader>
       <SidebarContent>
         <ScrollArea className='pr-1'>
+          <SidebarGroup>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className='cursor-pointer'>
+                  <Link
+                    to='/'
+                    className={cn(
+                      'ring-offset-background focus-visible:ring-ring flex w-full items-center gap-2 rounded-md px-2 py-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+                      !looseParams.portfolioId
+                        ? 'bg-accent font-semibold'
+                        : 'hover:bg-accent/50',
+                    )}
+                  >
+                    <MapIcon size={16} />
+                    <span>Map</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
           <SidebarGroup>
             <SidebarGroupLabel>Portfolios</SidebarGroupLabel>
             <SidebarGroupAction

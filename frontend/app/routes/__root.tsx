@@ -80,7 +80,12 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html className='h-full w-full' lang='en' dir='ltr'>
+    <html
+      className='h-full w-full'
+      lang='en'
+      dir='ltr'
+      suppressHydrationWarning
+    >
       <head>
         <HeadContent />
       </head>
