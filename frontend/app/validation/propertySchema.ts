@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const propertyFormSchema = z.object({
-  portifolioId: z.number({
+  portfolioId: z.number({
     invalid_type_error: 'Portfolio must be a number',
   }),
   address: z

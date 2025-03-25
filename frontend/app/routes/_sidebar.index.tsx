@@ -3,11 +3,12 @@ import type { components } from '@/api/schema';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { createFileRoute } from '@tanstack/react-router';
-import { MapPinIcon } from 'lucide-react';
+import { MapPinIcon, PlusIcon } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { Marker, type ViewStateChangeEvent } from 'react-map-gl/maplibre';
 
 import { BaseMap } from '@/components/custom-ui/base-map';
+import { Button } from '@/components/ui/button';
 
 import { useDebounce } from '@/hooks/use-debounce';
 
@@ -78,6 +79,14 @@ function HomePage() {
           </Link>
         </Marker>
       ))}
+      <div className='absolute bottom-4 left-4 z-10'>
+        <Button size='icon' asChild>
+          <Link to='/properties/new' className='block'>
+            <PlusIcon className='h-6 w-6' />
+            <span className='sr-only'>Add new property</span>
+          </Link>
+        </Button>
+      </div>
     </BaseMap>
   );
 }

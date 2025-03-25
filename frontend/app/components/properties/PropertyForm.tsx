@@ -1,6 +1,7 @@
 import type { components } from '@/api/schema';
 import { propertyFormSchema } from '@/validation/propertySchema';
 import { useMemo } from 'react';
+import type { z } from 'zod';
 
 import { useAppForm } from '@/components/custom-ui/form';
 
@@ -10,32 +11,34 @@ type PortfolioOption = {
   label: string;
   value: string;
 };
+type PropertyFormValues = z.infer<typeof propertyFormSchema>;
 
 type PropertyFormProps = {
   portfolios: Portfolio[];
   property: components['schemas']['Property'];
+  onSubmit: (values: PropertyFormValues) => void;
 };
 
-function PropertyForm({ portfolios, property }: PropertyFormProps) {
+function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
   const portfolioOptions = useMemo<PortfolioOption[]>(() => {
     if (!portfolios) return [];
 
     return portfolios.map((portfolio: Portfolio) => ({
       label: portfolio.name,
-      value: portfolio.id.toString(),
+      value: String(portfolio.id),
     }));
   }, [portfolios]);
 
   const form = useAppForm({
     defaultValues: {
-      portifolioId: property?.properties?.portfolio ?? 0,
+      portfolioId: property?.properties?.portfolio ?? 0,
       address: property?.properties?.address ?? '',
       zipCode: property?.properties?.zip_code ?? '',
       city: property?.properties?.city ?? '',
       coordinates: property?.geometry?.coordinates
         ? {
-            longitude: property.geometry.coordinates[0],
-            latitude: property.geometry.coordinates[1],
+            longitude: property.geometry.coordinates[0]!,
+            latitude: property.geometry.coordinates[1]!,
           }
         : { longitude: 0, latitude: 0 },
       estimatedValue: property?.properties?.estimated_value ?? 0,
@@ -47,7 +50,7 @@ function PropertyForm({ portfolios, property }: PropertyFormProps) {
       onChange: propertyFormSchema,
     },
     onSubmit: ({ value }) => {
-      alert(JSON.stringify(value, null, 2));
+      return onSubmit(value);
     },
   });
   return (
@@ -59,7 +62,7 @@ function PropertyForm({ portfolios, property }: PropertyFormProps) {
     >
       <form.AppForm>
         <form.AppField
-          name='portifolioId'
+          name='portfolioId'
           children={(field) => (
             <field.SelectField label='Portfolio' options={portfolioOptions} />
           )}
