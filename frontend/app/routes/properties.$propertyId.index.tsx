@@ -5,7 +5,12 @@ import {
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Link, useNavigate, useParams } from '@tanstack/react-router';
-import { ArrowLeft, MapPinIcon, PencilIcon, Trash2Icon } from 'lucide-react';
+import {
+  ArrowLeftIcon,
+  MapPinIcon,
+  PencilIcon,
+  Trash2Icon,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Marker } from 'react-map-gl/maplibre';
 
@@ -91,7 +96,7 @@ function PropertyDetailsPage() {
             onClick={handleBack}
             className='shrink-0'
           >
-            <ArrowLeft className='h-4 w-4' />
+            <ArrowLeftIcon className='h-4 w-4' />
           </Button>
           <h1 className='text-xl-3xl-clamp truncate font-bold'>{name}</h1>
         </div>

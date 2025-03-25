@@ -15,7 +15,7 @@ type PropertyFormValues = z.infer<typeof propertyFormSchema>;
 
 type PropertyFormProps = {
   portfolios: Portfolio[];
-  property: components['schemas']['Property'];
+  property?: components['schemas']['Property'];
   onSubmit: (values: PropertyFormValues) => void;
 };
 
@@ -37,8 +37,8 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
       city: property?.properties?.city ?? '',
       coordinates: property?.geometry?.coordinates
         ? {
-            longitude: property.geometry.coordinates[0]!,
-            latitude: property.geometry.coordinates[1]!,
+            longitude: property.geometry.coordinates[0] ?? 0,
+            latitude: property.geometry.coordinates[1] ?? 0,
           }
         : { longitude: 0, latitude: 0 },
       estimatedValue: property?.properties?.estimated_value ?? 0,
@@ -99,7 +99,7 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
           name='financialRisk'
           children={(field) => <field.CurrencyField label='Financial Risk' />}
         />
-        <form.SubmitButton />
+        <form.SubmitButton>Submit property</form.SubmitButton>
       </form.AppForm>
     </form>
   );

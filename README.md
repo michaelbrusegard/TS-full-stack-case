@@ -86,6 +86,7 @@ docker compose exec backend python manage.py generate_fixtures
 Dealt with uni stuff while working on this case, so time estimates are a little vague.
 
 - **Backend + Project setup**: ~3 hours work (5 hours total)
+- **Frontend**: 10+ hours work
 
 ## A Brief Overview of Our Current Tech Stack
 
