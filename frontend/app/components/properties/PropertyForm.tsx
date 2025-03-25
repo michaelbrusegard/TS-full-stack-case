@@ -55,6 +55,7 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
   });
   return (
     <form
+      className='space-y-8'
       onSubmit={(e) => {
         e.preventDefault();
         void form.handleSubmit();
@@ -85,7 +86,7 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
         />
         <form.AppField
           name='estimatedValue'
-          children={(field) => <field.CurrencyField label='Estimated value' />}
+          children={(field) => <field.NumberField label='Estimated value' />}
         />
         <form.AppField
           name='relevantRisks'
@@ -97,7 +98,7 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
         />
         <form.AppField
           name='financialRisk'
-          children={(field) => <field.CurrencyField label='Financial Risk' />}
+          children={(field) => <field.NumberField label='Financial Risk' />}
         />
         <form.SubmitButton>Submit property</form.SubmitButton>
       </form.AppForm>

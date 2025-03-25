@@ -32,18 +32,13 @@ type BaseFieldProps = {
 };
 
 function BaseField({ className, label, children }: BaseFieldProps) {
-  const form = useFormContext();
   const field = useFieldContext();
   const id = useId();
 
   return (
     <div className={cn('realtive space-y-2', className)}>
       <Label
-        className={cn(
-          form.state.isSubmitted &&
-            field.state.meta.errors.length > 0 &&
-            'text-destructive',
-        )}
+        className={cn(field.state.meta.errors.length > 0 && 'text-destructive')}
         htmlFor={`${id}-form-item`}
       >
         {label}
@@ -55,9 +50,7 @@ function BaseField({ className, label, children }: BaseFieldProps) {
             ? `${id}-form-item-description`
             : `${id}-form-item-description ${id}-form-item-message`
         }
-        aria-invalid={
-          !!(form.state.isSubmitted && field.state.meta.errors.length > 0)
-        }
+        aria-invalid={!!(field.state.meta.errors.length > 0)}
       >
         {children}
       </Slot>
@@ -72,9 +65,8 @@ function BaseField({ className, label, children }: BaseFieldProps) {
           className,
         )}
       >
-        {form.state.isSubmitted &&
-          field.state.meta.errors.length > 0 &&
-          String(field.state.meta.errors[0]).split(', ')[0]}
+        {field.state.meta.errors.length > 0 &&
+          (field.state.meta.errors[0] as { message: string }).message}
       </p>
     </div>
   );
@@ -255,9 +247,16 @@ function CurrencyField({
 }
 
 type SubmitButtonProps = Omit<React.ComponentProps<typeof Button>, 'type'> &
-  VariantProps<typeof buttonVariants>;
+  VariantProps<typeof buttonVariants> & {
+    loading?: boolean;
+  };
 
-function SubmitButton({ children, className, ...props }: SubmitButtonProps) {
+function SubmitButton({
+  children,
+  className,
+  loading,
+  ...props
+}: SubmitButtonProps) {
   const form = useFormContext();
   return (
     <form.Subscribe
@@ -271,10 +270,14 @@ function SubmitButton({ children, className, ...props }: SubmitButtonProps) {
         <Button
           className={cn('min-w-28', className)}
           type='submit'
-          disabled={isSubmitting ?? isPristine ?? isValidating}
+          disabled={isSubmitting ?? isPristine ?? isValidating ?? loading}
           {...props}
         >
-          {(isSubmitting ?? isValidating) ? <Spinner size='sm' /> : children}
+          {isSubmitting || isValidating || loading ? (
+            <Spinner size='sm' />
+          ) : (
+            children
+          )}
         </Button>
       )}
     </form.Subscribe>
