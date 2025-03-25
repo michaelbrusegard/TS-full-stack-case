@@ -50,7 +50,7 @@ function PropertyCard({ property }: PropertyCardProps) {
         <CardHeader>
           <div className='flex items-start justify-between'>
             <div>
-              <CardTitle className='truncate'>
+              <CardTitle className='truncate pb-1'>
                 {property.properties.name}
               </CardTitle>
               <CardDescription className='text-muted-foreground flex items-center gap-1'>

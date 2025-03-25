@@ -3,7 +3,7 @@ import type { components } from '@/api/schema';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { createFileRoute } from '@tanstack/react-router';
-import { MapPin } from 'lucide-react';
+import { MapPinIcon } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { Marker, type ViewStateChangeEvent } from 'react-map-gl/maplibre';
 
@@ -23,10 +23,10 @@ export const Route = createFileRoute('/_sidebar/')({
       getPropertiesByBboxQueryOptions(OSLO_BBOX),
     );
   },
-  component: Home,
+  component: HomePage,
 });
 
-function Home() {
+function HomePage() {
   const [bbox, setBbox] = useState<[number, number, number, number]>(OSLO_BBOX);
   const debouncedBbox = useDebounce(bbox, 500);
 
@@ -71,7 +71,7 @@ function Home() {
             params={{ propertyId: String(feature.id) }}
             className='block'
           >
-            <MapPin
+            <MapPinIcon
               className='text-primary hover:text-primary/80 h-6 w-6 -translate-y-full cursor-pointer transition-colors'
               strokeWidth={2.5}
             />

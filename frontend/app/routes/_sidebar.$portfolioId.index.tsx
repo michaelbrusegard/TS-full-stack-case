@@ -20,10 +20,10 @@ export const Route = createFileRoute('/_sidebar/$portfolioId/')({
       getPropertiesByPortfolioQueryOptions(Number(portfolioId), 1, PAGE_SIZE),
     );
   },
-  component: PropertyPage,
+  component: PortfolioPage,
 });
 
-function PropertyPage() {
+function PortfolioPage() {
   const { portfolioId } = useParams({ from: '/_sidebar/$portfolioId/' });
   const [currentPage, setCurrentPage] = useState(1);
   const portfolios = useStore(portfoliosStore, (state) => state.portfolios);
