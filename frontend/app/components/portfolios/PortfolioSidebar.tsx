@@ -106,11 +106,8 @@ function PortfolioSidebar() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {portfolios.length === 0
-                  ? Array.from(
-                      { length: 8 },
-                      (_, __) => `skeleton-item-${crypto.randomUUID()}`,
-                    ).map((id) => (
-                      <SidebarMenuItem key={id}>
+                  ? Array.from({ length: 8 }, (_, index) => (
+                      <SidebarMenuItem key={`skeleton-item-${index + 1}`}>
                         <SidebarMenuSkeleton />
                       </SidebarMenuItem>
                     ))
@@ -146,6 +143,7 @@ function PortfolioSidebar() {
         open={newPortfolioOpen}
         onOpenChange={setNewPortfolioOpen}
         title='Create Portfolio'
+        description='Create a new portfolio to group your properties.'
         isLoading={createPortfolioMutation.isPending}
         onSubmit={handleCreatePortfolio}
       />

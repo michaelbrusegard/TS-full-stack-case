@@ -62,6 +62,7 @@ function PortfolioOptionsDropdown({
 
       <PortfolioDialog
         open={renameOpen}
+        description='Rename portfolio to something more descriptive.'
         onOpenChange={setRenameOpen}
         title='Rename Portfolio'
         defaultValue={portfolio.name}

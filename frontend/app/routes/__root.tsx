@@ -7,10 +7,11 @@ import {
   createRootRouteWithContext,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
-import { DefaultCatchBoundary } from '@/components/DefaultCatchBoundary'
 import type { ReactNode } from 'react';
 
+import { DefaultCatchBoundary } from '@/components/DefaultCatchBoundary';
 import { NotFound } from '@/components/NotFound';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 import appCss from '@/styles/app.css?url';
 
@@ -63,7 +64,7 @@ export const Route = createRootRouteWithContext<{
       <RootDocument>
         <DefaultCatchBoundary {...props} />
       </RootDocument>
-    )
+    );
   },
   notFoundComponent: () => <NotFound />,
   component: RootComponent,
@@ -84,7 +85,9 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <HeadContent />
       </head>
       <body className='bg-background text-foreground text-sans h-full w-full antialiased'>
-        {children}
+        <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
+          {children}
+        </ThemeProvider>
         <TanStackRouterDevtools position='bottom-right' />
         <ReactQueryDevtools buttonPosition='bottom-left' />
         <Scripts />
