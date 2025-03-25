@@ -1,16 +1,22 @@
+import type { QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
   HeadContent,
   Outlet,
   Scripts,
-  createRootRoute,
+  createRootRouteWithContext,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import { DefaultCatchBoundary } from '@/components/DefaultCatchBoundary'
 import type { ReactNode } from 'react';
+
+import { NotFound } from '@/components/NotFound';
 
 import appCss from '@/styles/app.css?url';
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   head: () => ({
     meta: [
       {
@@ -52,6 +58,14 @@ export const Route = createRootRoute({
       { rel: 'icon', href: '/favicon.ico' },
     ],
   }),
+  errorComponent: (props) => {
+    return (
+      <RootDocument>
+        <DefaultCatchBoundary {...props} />
+      </RootDocument>
+    )
+  },
+  notFoundComponent: () => <NotFound />,
   component: RootComponent,
 });
 
