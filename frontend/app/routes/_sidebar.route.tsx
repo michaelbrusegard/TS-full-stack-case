@@ -3,6 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
+import { UtilityHeader } from '@/components/UtilityHeader';
 import { PortfolioSidebar } from '@/components/portfolios/PortfolioSidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
@@ -23,6 +24,7 @@ function LayoutComponent() {
 
   return (
     <SidebarProvider>
+      <UtilityHeader />
       <PortfolioSidebar />
       <SidebarInset>
         <Outlet />
