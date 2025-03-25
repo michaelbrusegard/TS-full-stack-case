@@ -5,13 +5,9 @@ import { Link } from '@tanstack/react-router';
 import { createFileRoute } from '@tanstack/react-router';
 import { MapPin } from 'lucide-react';
 import { useCallback, useState } from 'react';
-import Map, {
-  Marker,
-  NavigationControl,
-  type ViewStateChangeEvent,
-} from 'react-map-gl/maplibre';
+import { Marker, type ViewStateChangeEvent } from 'react-map-gl/maplibre';
 
-import { useTheme } from '@/components/layout/ThemeProvider';
+import { BaseMap } from '@/components/custom-ui/base-map';
 
 import { useDebounce } from '@/hooks/use-debounce';
 
@@ -31,7 +27,6 @@ export const Route = createFileRoute('/_sidebar/')({
 });
 
 function Home() {
-  const { resolvedTheme } = useTheme();
   const [bbox, setBbox] = useState<[number, number, number, number]>(OSLO_BBOX);
   const debouncedBbox = useDebounce(bbox, 500);
 
@@ -45,11 +40,6 @@ function Home() {
   const properties =
     (data?.features as components['schemas']['Property'][]) || [];
 
-  const mapStyle =
-    resolvedTheme === 'dark'
-      ? 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
-      : 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
-
   const onMoveEnd = useCallback((evt: ViewStateChangeEvent) => {
     const bounds = evt.target.getBounds();
     const newBbox: [number, number, number, number] = [
@@ -62,17 +52,14 @@ function Home() {
   }, []);
 
   return (
-    <Map
+    <BaseMap
       initialViewState={{
         longitude: 10.75,
         latitude: 59.91,
         zoom: 12,
       }}
-      mapStyle={mapStyle}
       onMoveEnd={onMoveEnd}
     >
-      <NavigationControl position='bottom-right' />
-
       {properties.map((feature: Property) => (
         <Marker
           key={feature.id}
@@ -91,6 +78,6 @@ function Home() {
           </Link>
         </Marker>
       ))}
-    </Map>
+    </BaseMap>
   );
 }
