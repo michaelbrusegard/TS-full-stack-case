@@ -88,7 +88,10 @@ function PortfolioSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader></SidebarHeader>
+      <SidebarHeader className='mt-2 flex flex-row items-center gap-3 px-4 py-2'>
+        <img src='/logo.png' alt='Telescope Logo' className='h-8 w-8' />
+        <span className='text-xl font-semibold'>Telescope</span>
+      </SidebarHeader>
       <SidebarContent>
         <ScrollArea className='pr-1'>
           <SidebarGroup>
