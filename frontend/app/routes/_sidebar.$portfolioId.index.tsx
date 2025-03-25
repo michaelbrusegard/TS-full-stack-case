@@ -3,11 +3,14 @@ import type { components } from '@/api/schema';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { createFileRoute } from '@tanstack/react-router';
+import { useStore } from '@tanstack/react-store';
 import { useState } from 'react';
 
 import { EmptyPropertyGrid } from '@/components/properties/EmptyPropertyGrid';
 import { PropertyGrid } from '@/components/properties/PropertyGrid';
 import { PropertyPagination } from '@/components/properties/PropertyPagination';
+
+import { portfoliosStore } from '@/stores/portfolios';
 
 const PAGE_SIZE = 12;
 
@@ -23,6 +26,7 @@ export const Route = createFileRoute('/_sidebar/$portfolioId/')({
 function PropertyPage() {
   const { portfolioId } = useParams({ from: '/_sidebar/$portfolioId/' });
   const [currentPage, setCurrentPage] = useState(1);
+  const portfolios = useStore(portfoliosStore, (state) => state.portfolios);
 
   const { data } = useSuspenseQuery({
     ...getPropertiesByPortfolioQueryOptions(
@@ -39,7 +43,10 @@ function PropertyPage() {
   return (
     <div className='flex h-full w-full flex-col space-y-4 p-4'>
       <div className='flex items-center justify-center'>
-        <h1 className='text-2xl font-bold'>Properties</h1>
+        <h1 className='text-2xl font-bold'>
+          {portfolios.find((p) => p.id === Number(portfolioId))?.name ??
+            'Properties'}
+        </h1>
       </div>
 
       {properties.length === 0 ? (
