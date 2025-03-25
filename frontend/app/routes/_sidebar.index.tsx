@@ -5,5 +5,5 @@ export const Route = createFileRoute('/_sidebar/')({
 });
 
 function Home() {
-  return <div>Overview of properties</div>;
+  return <div className='h-full w-full'>dfjadflafjd</div>;
 }

@@ -1,16 +1,32 @@
+import { portfoliosQueryOptions } from '@/api/portfolios';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, createFileRoute } from '@tanstack/react-router';
+import { useEffect } from 'react';
+
+import { PortfolioSidebar } from '@/components/portfolios/PortfolioSidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+
+import { portfolioActions } from '@/stores/portfolios';
 
 export const Route = createFileRoute('/_sidebar')({
+  loader: ({ context: { queryClient } }) =>
+    queryClient.ensureQueryData(portfoliosQueryOptions),
   component: LayoutComponent,
 });
 
 function LayoutComponent() {
+  const portfoliosQuery = useSuspenseQuery(portfoliosQueryOptions);
+
+  useEffect(() => {
+    portfolioActions.setPortfolios(portfoliosQuery.data);
+  }, [portfoliosQuery.data]);
+
   return (
-    <div className='p-2'>
-      <div className='border-b'>I'm a layout</div>
-      <div>
+    <SidebarProvider>
+      <PortfolioSidebar />
+      <SidebarInset>
         <Outlet />
-      </div>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
