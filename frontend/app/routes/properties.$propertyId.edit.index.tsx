@@ -16,8 +16,13 @@ import { PropertyForm } from '@/components/properties/PropertyForm';
 import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/properties/$propertyId/edit/')({
-  loader: ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(getPortfoliosQueryOptions()),
+  loader: ({ context: { queryClient }, params: { propertyId } }) =>
+    Promise.all([
+      queryClient.ensureQueryData(getPortfoliosQueryOptions()),
+      queryClient.ensureQueryData(
+        getPropertyByIdQueryOptions(Number(propertyId)),
+      ),
+    ]),
   component: UpdatePropertyPage,
 });
 
@@ -48,8 +53,12 @@ function UpdatePropertyPage() {
 
       <PropertyForm
         portfolios={portfoliosQuery.data}
+        property={propertyQuery.data}
         onSubmit={(values) => {
+          const id = propertyQuery.data.id!;
+
           const mutationData = {
+            id,
             type: 'Feature' as const,
             geometry: {
               type: 'Point' as const,
@@ -59,7 +68,6 @@ function UpdatePropertyPage() {
               ],
             },
             properties: {
-              id: propertyQuery.data.id,
               name: values.name,
               portfolio: Number(values.portfolioId),
               address: values.address,

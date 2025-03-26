@@ -194,7 +194,7 @@ function PropertyDetailsPage() {
             initialViewState={{
               longitude: coordinates?.[0] ?? 10.75,
               latitude: coordinates?.[1] ?? 59.91,
-              zoom: 14,
+              zoom: 13,
             }}
           >
             {coordinates && (

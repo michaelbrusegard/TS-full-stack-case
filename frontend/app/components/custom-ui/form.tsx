@@ -160,7 +160,7 @@ const DEFAULT_COORDINATES: Location = {
 function MapField({
   label,
   className,
-  zoom = 1,
+  zoom = 4,
   coordinates = DEFAULT_COORDINATES,
 }: MapFieldProps) {
   const field = useFieldContext<Location>();
