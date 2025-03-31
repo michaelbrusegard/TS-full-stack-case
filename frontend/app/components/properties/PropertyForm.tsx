@@ -105,6 +105,14 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
         />
         <form.AppField
           name='handledRisks'
+          validators={{
+            onChangeListenTo: ['relevantRisks'],
+            onChange: ({ value, fieldApi }) => {
+              if (value > fieldApi.form.getFieldValue('relevantRisks')) {
+                return 'Handled risks must be less than or equal to relevant risks';
+              }
+            },
+          }}
           children={(field) => <field.NumberField label='Handled risks' />}
         />
         <form.AppField
