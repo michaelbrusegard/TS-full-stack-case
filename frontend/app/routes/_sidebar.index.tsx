@@ -57,7 +57,7 @@ function HomePage() {
       initialViewState={{
         longitude: 10.75,
         latitude: 59.91,
-        zoom: 12,
+        zoom: 8,
       }}
       onMoveEnd={onMoveEnd}
     >

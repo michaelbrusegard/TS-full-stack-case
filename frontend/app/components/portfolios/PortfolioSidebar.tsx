@@ -116,7 +116,7 @@ function PortfolioSidebar() {
                       'ring-offset-background focus-visible:ring-ring flex w-full items-center gap-2 rounded-md px-2 py-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
                       !matches.some(
                         (match) => match.id === '/_sidebar/properties/',
-                      )
+                      ) && looseParams.portfolioId === undefined
                         ? 'bg-accent font-semibold'
                         : 'hover:bg-accent/50',
                     )}
