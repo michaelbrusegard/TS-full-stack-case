@@ -4,6 +4,7 @@ from django.contrib.gis.geos import Point
 from rest_framework.test import APIClient
 from rest_framework import status
 from .models import Property, Portfolio
+from .serializers import PropertySerializer
 
 class PropertyViewSetTests(TestCase):
     def setUp(self):
@@ -180,3 +181,140 @@ class ThrottleTests(TestCase):
 
     def tearDown(self):
         cache.clear()
+
+class SerializerValidationTests(TestCase):
+    def setUp(self):
+        self.portfolio = Portfolio.objects.create(name="Test Portfolio")
+        self.valid_property_data = {
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Point',
+                'coordinates': [10.7522, 59.9139]
+            },
+            'properties': {
+                'portfolio': self.portfolio.pk,
+                'name': 'Test Property',
+                'address': 'Test Street 1',
+                'zip_code': '0154',
+                'city': 'Oslo',
+                'estimated_value': 1000000,
+                'relevant_risks': 5,
+                'handled_risks': 3,
+                'total_financial_risk': 100000
+            }
+        }
+
+    def test_name_validation(self):
+        data = self.valid_property_data.copy()
+        data['properties']['name'] = ''
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('name', serializer.errors)
+
+        data['properties']['name'] = 'a' * 101
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('name', serializer.errors)
+
+    def test_zip_code_validation(self):
+        data = self.valid_property_data.copy()
+        data['properties']['zip_code'] = '123'
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('zip_code', serializer.errors)
+
+        data['properties']['zip_code'] = '12345'
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('zip_code', serializer.errors)
+
+        data['properties']['zip_code'] = 'abcd'
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('zip_code', serializer.errors)
+
+    def test_handled_risks_validation(self):
+        data = self.valid_property_data.copy()
+        data['properties']['relevant_risks'] = 3
+        data['properties']['handled_risks'] = 5
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('non_field_errors', serializer.errors)
+
+    def test_location_validation(self):
+        data = self.valid_property_data.copy()
+        data['geometry']['coordinates'] = [181, 0]
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('location', serializer.errors)
+
+        data['geometry']['coordinates'] = [0, 91]
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('location', serializer.errors)
+
+    def test_estimated_value_validation(self):
+        data = self.valid_property_data.copy()
+        data['properties']['estimated_value'] = -1000
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('estimated_value', serializer.errors)
+
+        data['properties']['estimated_value'] = 2000000000
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('estimated_value', serializer.errors)
+
+    def test_city_validation(self):
+        data = self.valid_property_data.copy()
+        data['properties']['city'] = ''
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('city', serializer.errors)
+
+        data['properties']['city'] = 'a' * 101
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('city', serializer.errors)
+
+    def test_address_validation(self):
+        data = self.valid_property_data.copy()
+        data['properties']['address'] = ''
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('address', serializer.errors)
+
+        data['properties']['address'] = 'a' * 256
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('address', serializer.errors)
+
+    def test_risks_number_validation(self):
+        data = self.valid_property_data.copy()
+        data['properties']['relevant_risks'] = -1
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('relevant_risks', serializer.errors)
+
+        data['properties']['relevant_risks'] = 1001
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('relevant_risks', serializer.errors)
+
+        data = self.valid_property_data.copy()
+        data['properties']['handled_risks'] = -1
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('handled_risks', serializer.errors)
+
+    def test_financial_risk_validation(self):
+        data = self.valid_property_data.copy()
+        data['properties']['total_financial_risk'] = -1
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('total_financial_risk', serializer.errors)
+
+        data['properties']['total_financial_risk'] = 1000000001
+        serializer = PropertySerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('total_financial_risk', serializer.errors)
