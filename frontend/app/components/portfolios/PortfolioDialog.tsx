@@ -32,6 +32,21 @@ function PortfolioDialog({
   description,
 }: PortfolioDialogProps) {
   const [name, setName] = useState(defaultValue);
+  const [error, setError] = useState<string | null>(null);
+
+  function handleNameChange(value: string) {
+    const trimmedValue = value.trim();
+    const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
+    setName(capitalizedValue);
+
+    if (trimmedValue.length === 0) {
+      setError('Name is required');
+    } else if (trimmedValue.length > 100) {
+      setError('Name must be less than 100 characters');
+    } else {
+      setError(null);
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -40,14 +55,20 @@ function PortfolioDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <div className='space-y-2 py-4'>
+        <div className='py-4'>
           <Label htmlFor='name'>Name</Label>
           <Input
+            className='mt-2'
             id='name'
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => handleNameChange(e.target.value)}
             placeholder='Portfolio name'
           />
+          {error && (
+            <p className='text-destructive absolute translate-y-1 text-xs'>
+              {error}
+            </p>
+          )}
         </div>
         <DialogFooter>
           <Button variant='outline' onClick={() => onOpenChange(false)}>
@@ -55,7 +76,7 @@ function PortfolioDialog({
           </Button>
           <Button
             onClick={() => onSubmit(name)}
-            disabled={isLoading ?? !name.trim()}
+            disabled={(isLoading ?? false) || !name.trim() || !!error}
           >
             Save
           </Button>
