@@ -2,7 +2,14 @@ import { Slot } from '@radix-ui/react-slot';
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 import type { VariantProps } from 'class-variance-authority';
 import { MapPinIcon, XIcon } from 'lucide-react';
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import type { MarkerDragEvent } from 'react-map-gl/maplibre';
 import { Marker } from 'react-map-gl/maplibre';
 
@@ -36,7 +43,7 @@ function BaseField({ className, label, children }: BaseFieldProps) {
   const id = useId();
 
   return (
-    <div className={cn('realtive space-y-2', className)}>
+    <div className={cn('relative space-y-2', className)}>
       <Label
         className={cn(field.state.meta.errors.length > 0 && 'text-destructive')}
         htmlFor={`${id}-form-item`}
@@ -45,19 +52,10 @@ function BaseField({ className, label, children }: BaseFieldProps) {
       </Label>
       <Slot
         id={`${id}-form-item`}
-        aria-describedby={
-          !(field.state.meta.errors.length > 0)
-            ? `${id}-form-item-description`
-            : `${id}-form-item-description ${id}-form-item-message`
-        }
         aria-invalid={!!(field.state.meta.errors.length > 0)}
       >
         {children}
       </Slot>
-      <p
-        id={`${id}-form-item-description`}
-        className={cn('text-muted-foreground text-sm', className)}
-      />
       <p
         id={`${id}-form-item-message`}
         className={cn(
@@ -216,72 +214,125 @@ function CurrencyField({
   locale = 'nb-NO',
   ...props
 }: CurrencyFieldProps) {
-  const field = useFieldContext<number>();
-  const [displayValue, setDisplayValue] = useState(() =>
-    field.state.value ? formatCurrency(field.state.value) : '',
-  );
+  const field = useFieldContext<number | null>();
+  const [inputValue, setInputValue] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const { decimalSeparator, groupSeparator } = useMemo(() => {
+    const parts = new Intl.NumberFormat(locale).formatToParts(1234.5);
+    return {
+      decimalSeparator: parts.find((p) => p.type === 'decimal')?.value ?? '.',
+      groupSeparator: parts.find((p) => p.type === 'group')?.value ?? ',',
+    };
+  }, [locale]);
+
   const formatCurrency = useCallback(
-    (value: number) => {
-      if (isNaN(value) || value === null) return '';
-      return new Intl.NumberFormat(locale, {
-        style: 'currency',
-        currency: currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(value);
+    (value: number | null | undefined): string => {
+      if (value === null || value === undefined || isNaN(value)) {
+        return '';
+      }
+      try {
+        return new Intl.NumberFormat(locale, {
+          style: 'currency',
+          currency: currency,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(value);
+      } catch (error) {
+        console.error('Error formatting currency:', error);
+        return `${value.toFixed(2)} (Error)`;
+      }
     },
-    [currency, locale],
+    [locale, currency],
   );
 
-  const parseNumber = useCallback((value: string) => {
-    const normalizedValue = value.replace(/,/g, '.');
-    const cleanValue = normalizedValue.replace(/[^0-9.-]/g, '');
-    return cleanValue ? Number(cleanValue) : 0;
-  }, []);
+  const parseCurrency = useCallback(
+    (value: string): number | null => {
+      if (typeof value !== 'string' || value.trim() === '') {
+        return null;
+      }
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const rawValue = e.target.value;
-      setDisplayValue(rawValue);
-      const numericValue = parseNumber(rawValue);
-      field.handleChange(numericValue);
+      const valueWithoutGroupSeparators = value.replaceAll(groupSeparator, '');
+
+      const normalizedValue = valueWithoutGroupSeparators.replace(
+        decimalSeparator,
+        '.',
+      );
+
+      const cleanedValue = normalizedValue.replace(/[^-0-9.]/g, '');
+
+      if (
+        cleanedValue === '' ||
+        cleanedValue === '-' ||
+        cleanedValue === '.' ||
+        cleanedValue.split('.').length > 2 ||
+        (cleanedValue.includes('-') && !cleanedValue.startsWith('-'))
+      ) {
+        if (cleanedValue === '-' || cleanedValue === '.') return null;
+        return null;
+      }
+
+      const numberValue = parseFloat(cleanedValue);
+
+      return isNaN(numberValue) ? null : numberValue;
     },
-    [field, parseNumber],
+    [groupSeparator, decimalSeparator],
   );
-
-  const handleFocus = useCallback(() => {
-    const numericValue = field.state.value ?? 0;
-    setDisplayValue(numericValue.toString());
-  }, [field.state.value]);
-
-  const handleBlur = useCallback(() => {
-    field.handleBlur();
-    const currentValue = field.state.value ?? 0;
-    setDisplayValue(formatCurrency(currentValue));
-  }, [field, formatCurrency]);
 
   useEffect(() => {
     if (document.activeElement !== inputRef.current) {
+      const newValue = formatCurrency(field.state.value);
       requestAnimationFrame(() => {
-        setDisplayValue(
-          field.state.value ? formatCurrency(field.state.value) : '',
-        );
+        setInputValue(newValue);
       });
     }
   }, [field.state.value, formatCurrency]);
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const rawValue = e.target.value;
+    setInputValue(rawValue);
+
+    const numericValue = parseCurrency(rawValue);
+
+    if (numericValue !== null || rawValue === '') {
+      field.handleChange(numericValue);
+    }
+  }
+
+  function handleFocus() {
+    const numericValue = field.state.value;
+    if (numericValue !== null && numericValue !== undefined) {
+      const plainNumberString = numericValue
+        .toFixed(2)
+        .replace('.', decimalSeparator);
+      setInputValue(plainNumberString);
+    } else {
+      setInputValue('');
+    }
+    requestAnimationFrame(() => {
+      inputRef.current?.select();
+    });
+  }
+
+  function handleBlur() {
+    const numericValue = parseCurrency(inputValue);
+    field.handleChange(numericValue);
+    const formattedValue = formatCurrency(numericValue);
+    setInputValue(formattedValue);
+    field.handleBlur();
+  }
 
   return (
     <BaseField label={label} className={className}>
       <Input
         ref={inputRef}
         type='text'
-        value={displayValue}
+        inputMode='decimal'
+        value={inputValue}
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        placeholder={`0,00 ${currency}`}
+        placeholder={formatCurrency(0)}
         {...props}
       />
     </BaseField>

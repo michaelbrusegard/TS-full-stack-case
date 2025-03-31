@@ -97,7 +97,7 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
         />
         <form.AppField
           name='estimatedValue'
-          children={(field) => <field.NumberField label='Estimated value' />}
+          children={(field) => <field.CurrencyField label='Estimated value' />}
         />
         <form.AppField
           name='relevantRisks'
@@ -109,7 +109,7 @@ function PropertyForm({ portfolios, property, onSubmit }: PropertyFormProps) {
         />
         <form.AppField
           name='financialRisk'
-          children={(field) => <field.NumberField label='Financial Risk' />}
+          children={(field) => <field.CurrencyField label='Financial Risk' />}
         />
         <form.SubmitButton>Submit property</form.SubmitButton>
       </form.AppForm>
