@@ -37,10 +37,11 @@ services:
     networks:
       - nginx_default
   frontend:
-    build: ./frontend
-    args:
-      - NODE_ENV=${NODE_ENV:-production}
-      - BACKEND_API_URL=${BACKEND_API_URL}
+    build:
+      context: ./frontend
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+        - BACKEND_API_URL=${BACKEND_API_URL}
     command: node .output/server/index.mjs
     environment:
       - NODE_ENV=${NODE_ENV:-development}
