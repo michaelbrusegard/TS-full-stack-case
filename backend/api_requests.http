@@ -1,0 +1,21 @@
+# This is a file for manually testing API responses
+@baseUrl = http://localhost:8000
+@portfolioApiUrl = {{baseUrl}}/api/portfolios
+@propertyApiUrl = {{baseUrl}}/api/properties
+@existingPortfolioId = 1
+
+###
+# List all Portfolios with nested Properties
+# Properties array should be populated correctly for each portfolio
+GET {{portfolioApiUrl}}/
+
+###
+# Retrieve a specific Portfolio with nested Properties
+# Contains the correct properties for this portfolio
+GET {{portfolioApiUrl}}/{{existingPortfolioId}}/
+
+###
+# List Properties filtered by the specific Portfolio ID
+# Verify only properties belonging to this portfolio are returned
+GET {{propertyApiUrl}}/?portfolio={{existingPortfolioId}}
+

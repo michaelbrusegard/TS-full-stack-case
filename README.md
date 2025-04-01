@@ -88,6 +88,34 @@ Dealt with uni stuff while working on this case, so time estimates are a little 
 - **Backend + Project setup**: ~3 hours work (5 hours total)
 - **Frontend**: 10+ hours work
 
+Spent around 2-3 hours with the project after the meeting.
+
+## Backend query task and N+1
+
+I was asked to change the backend query that would retrieve all the portfolios to include all its properties underneath a 'properties' field within the same query.
+
+Doing this in Django exposes a quite common problem with the ORM, the N+1 problem. This is when you have a query that retrieves a list of objects and then, for each object in that list, you perform another query to fetch related data. Since the ORM is quite obfuscated (it does a lot for you, and it is not very SQL like) it can be hard to understand how many database queries are being executed under the hood.
+
+If we define the query set for `propertis` like below:
+
+```bash
+portfolios = Portfolio.objects.all()
+```
+
+It will then execute execute 1 query to get the portfolios and then N queries to get the properties for each portfolio.
+
+The solution is to define the query set like below:
+
+```bash
+portfolios = Portfolio.objects.prefetch_related('properties').all()
+```
+
+This causes the ORM to fetch all portfolios and then fetch all properties related to the portfolios in a single query. A total of 2 database queries.
+
+There is also an option to use `select_related` which is used when you have a one-to-one or many-to-one relationship. This will fetch the related object in the same query as the main object. This is not the case for this project, but it is good to know. It would be used in the opposite scenario for example if I needed to get the related portfolio for each property.
+
+After reading further up on the topic, there does not seem to be almost any good reason to ever use `objects.all()`. The only scenarios I could think of would maybe a form where one of the fields in the form is a select field and you want to query all the options for the select field (and it is in a dedicated model). Also if the model is static and relatively small, it might be okay to use `objects.all()`.
+
 ## A Brief Overview of Our Current Tech Stack
 
 Our backend is built on the Python-based Django REST framework. We use a

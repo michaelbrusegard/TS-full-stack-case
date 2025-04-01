@@ -14,7 +14,7 @@ class GeoPropertyPagination(GeoJsonPagination):
     max_page_size = 100
 
 class PortfolioViewSet(viewsets.ModelViewSet):
-    queryset = Portfolio.objects.all()
+    queryset = Portfolio.objects.prefetch_related('properties').all()
     serializer_class = PortfolioSerializer
     throttle_classes = [PropertyRateThrottle]
     pagination_class = None

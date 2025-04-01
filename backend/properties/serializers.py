@@ -3,18 +3,6 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from .models import Property, Portfolio
 import re
 
-class PortfolioSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Portfolio
-        fields = ['id', 'name', 'created_at']
-
-    def validate_name(self, value):
-        if len(value.strip()) < 1:
-            raise serializers.ValidationError("Name is required")
-        if len(value) > 100:
-            raise serializers.ValidationError("Name must be less than 100 characters")
-        return value.strip().title()
-
 class PropertySerializer(GeoFeatureModelSerializer):
     class Meta:
         model = Property
@@ -96,3 +84,17 @@ class PropertySerializer(GeoFeatureModelSerializer):
                 "Number of handled risks cannot exceed number of relevant risks"
             )
         return attrs
+
+class PortfolioSerializer(serializers.ModelSerializer):
+    properties = PropertySerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Portfolio
+        fields = ['id', 'name', 'created_at', 'properties']
+
+    def validate_name(self, value):
+        if len(value.strip()) < 1:
+            raise serializers.ValidationError("Name is required")
+        if len(value) > 100:
+            raise serializers.ValidationError("Name must be less than 100 characters")
+        return value.strip().title()
