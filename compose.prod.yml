@@ -41,11 +41,11 @@ services:
       context: ./frontend
       args:
         - NODE_ENV=${NODE_ENV:-production}
-        - BACKEND_API_URL=${BACKEND_API_URL}
+        - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL}
     command: node .output/server/index.mjs
     environment:
       - NODE_ENV=${NODE_ENV:-development}
-      - BACKEND_API_URL=${BACKEND_API_URL}
+      - VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL}
       - INTERNAL_BACKEND_API_URL=${INTERNAL_BACKEND_API_URL}
       - IS_DOCKER=${IS_DOCKER}
     depends_on:
