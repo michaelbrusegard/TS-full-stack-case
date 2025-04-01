@@ -9,6 +9,15 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 ROOT_URLCONF = 'core.urls'
 WSGI_APPLICATION = 'core.wsgi.application'
 
+print("--- Reading settings ---")
+print(f"DB_USER from env: {os.getenv('DB_USER')}")
+print(f"DB_NAME from env: {os.getenv('DB_NAME')}")
+print(f"DB_PASSWORD from env: {'******' if os.getenv('DB_PASSWORD') else None}")
+print(f"DB_HOST from env: {os.getenv('DB_HOST')}")
+print(f"DB_PORT from env: {os.getenv('DB_PORT')}")
+print(f"DATABASE_URL from env: {os.getenv('DATABASE_URL')}")
+print("------------------------")
+
 # Database
 DATABASES = {
     'default': {
