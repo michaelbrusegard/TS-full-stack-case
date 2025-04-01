@@ -1,5 +1,5 @@
 const BACKEND_API_URL =
-  process.env.VITE_BACKEND_API_URL ?? 'http://localhost:8000';
+  (import.meta.env.VITE_BACKEND_API_URL as string) ?? 'http://localhost:8000';
 const INTERNAL_BACKEND_API_URL =
   process.env.INTERNAL_BACKEND_API_URL ?? 'http://backend:8000';
 const IS_DOCKER = process.env.IS_DOCKER ?? false;
