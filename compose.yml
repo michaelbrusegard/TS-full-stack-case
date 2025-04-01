@@ -26,7 +26,6 @@ services:
     ports:
       - ${BACKEND_PORT:-8000}:8000
     environment:
-      - DATABASE_URL=postgis://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DJANGO_ENV=${DJANGO_ENV:-development}
       - DB_HOST=${DB_HOST}
