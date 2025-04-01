@@ -1,5 +1,7 @@
 # Telescope-full-stack-case
 
+The hosted version can be accessed [here](https://telescope.michaelbrusegard.com/). There is currently a CSS loading issue when the page is initially loaded. I am pretty sure this comes from using the new ersion of tailwind (v4) in conjunction with Tanstack Start (or router) which is in beta. I did not have time to troubleshoot it further.
+
 ## How to run
 
 You need to have docker installed on your machine.
