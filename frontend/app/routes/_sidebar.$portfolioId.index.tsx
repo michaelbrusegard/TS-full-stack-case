@@ -1,44 +1,54 @@
+import { getPortfoliosQueryOptions } from '@/api/portfolios';
 import { getPropertiesByPortfolioQueryOptions } from '@/api/properties';
 import type { components } from '@/api/schema';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { createFileRoute } from '@tanstack/react-router';
-import { useStore } from '@tanstack/react-store';
 import { useState } from 'react';
 
 import { EmptyPropertyGrid } from '@/components/properties/EmptyPropertyGrid';
 import { PropertyGrid } from '@/components/properties/PropertyGrid';
 import { PropertyPagination } from '@/components/properties/PropertyPagination';
 
-import { portfoliosStore } from '@/stores/portfolios';
-
 const PAGE_SIZE = 12;
 
 export const Route = createFileRoute('/_sidebar/$portfolioId/')({
-  loader: ({ context: { queryClient }, params: { portfolioId } }) => {
-    return queryClient.ensureQueryData(
+  loader: async ({ context: { queryClient }, params: { portfolioId } }) => {
+    const propertiesPromise = queryClient.ensureQueryData(
       getPropertiesByPortfolioQueryOptions(Number(portfolioId), 1, PAGE_SIZE),
     );
+    const portfoliosPromise = queryClient.ensureQueryData(
+      getPortfoliosQueryOptions(),
+    );
+
+    const [propertiesData, portfoliosData] = await Promise.all([
+      propertiesPromise,
+      portfoliosPromise,
+    ]);
+
+    return { propertiesData, portfoliosData };
   },
   component: PortfolioPage,
 });
 
 function PortfolioPage() {
   const { portfolioId } = useParams({ from: '/_sidebar/$portfolioId/' });
+  const loaderData = Route.useLoaderData();
   const [currentPage, setCurrentPage] = useState(1);
-  const portfolios = useStore(portfoliosStore, (state) => state.portfolios);
+  const portfolios = loaderData.portfoliosData;
 
-  const { data } = useSuspenseQuery({
+  const { data: propertiesData } = useSuspenseQuery({
     ...getPropertiesByPortfolioQueryOptions(
       Number(portfolioId),
       currentPage,
       PAGE_SIZE,
     ),
+    initialData: currentPage === 1 ? loaderData.propertiesData : undefined,
   });
 
-  const totalPages = Math.ceil(data.count / PAGE_SIZE);
+  const totalPages = Math.ceil(propertiesData.count / PAGE_SIZE);
   const properties =
-    (data.features as components['schemas']['Property'][]) || [];
+    (propertiesData.features as components['schemas']['Property'][]) || [];
 
   return (
     <div className='flex h-full w-full flex-col space-y-4 p-4'>
