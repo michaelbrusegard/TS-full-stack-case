@@ -1,18 +1,18 @@
 import { queryOptions, useMutation } from '@tanstack/react-query';
 
+import { BACKEND_API_URL, getApiUrl } from './getUrl';
 import type { components } from './schema';
 
 type Portfolio = components['schemas']['Portfolio'];
 type NewPortfolio = Pick<Portfolio, 'name'>;
 type UpdatePortfolio = Pick<Portfolio, 'name'>;
 
-const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL as string;
-
 function getPortfoliosQueryOptions() {
   return queryOptions<Portfolio[]>({
     queryKey: ['portfolios'],
     queryFn: async () => {
-      const response = await fetch(`${BACKEND_API_URL}/api/portfolios/`);
+      const apiUrl = getApiUrl();
+      const response = await fetch(`${apiUrl}/api/portfolios/`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }

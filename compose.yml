@@ -40,12 +40,13 @@ services:
   frontend:
     build: ./frontend
     command: node .output/server/index.mjs
-    volumes:
-      - ./frontend:/app
     ports:
       - ${FRONTEND_PORT:-3000}:3000
     environment:
-      - BACKEND_URL=http://localhost:8000
+      - NODE_ENV=${NODE_ENV:-development}
+      - BACKEND_API_URL=${BACKEND_API_URL}
+      - INTERNAL_BACKEND_API_URL=${INTERNAL_BACKEND_API_URL}
+      - IS_DOCKER=${IS_DOCKER}
     depends_on:
       - backend
 

@@ -1,17 +1,17 @@
 import { queryOptions, useMutation } from '@tanstack/react-query';
 
+import { BACKEND_API_URL, getApiUrl } from './getUrl';
 import type { components } from './schema';
 
 type Property = components['schemas']['Property'];
 type PaginatedPropertyList = components['schemas']['PaginatedPropertyList'];
 
-const BACKEND_API_URL = (import.meta.env.VITE_BACKEND_API_URL as string);
-
 function getPropertyByIdQueryOptions(id: number) {
   return queryOptions<Property>({
     queryKey: ['properties', id],
     queryFn: async () => {
-      const response = await fetch(`${BACKEND_API_URL}/api/properties/${id}/`);
+      const apiUrl = getApiUrl();
+      const response = await fetch(`${apiUrl}/api/properties/${id}/`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -26,9 +26,10 @@ function getPropertiesByBboxQueryOptions(
   return queryOptions<PaginatedPropertyList>({
     queryKey: ['properties', 'bbox', bbox],
     queryFn: async () => {
+      const apiUrl = getApiUrl();
       const bboxString = bbox.join(',');
       const response = await fetch(
-        `${BACKEND_API_URL}/api/properties/?in_bbox=${bboxString}`,
+        `${apiUrl}/api/properties/?in_bbox=${bboxString}`,
       );
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -42,12 +43,13 @@ function getPropertiesQueryOptions(page?: number, pageSize?: number) {
   return queryOptions<PaginatedPropertyList>({
     queryKey: ['properties', { page, pageSize }],
     queryFn: async () => {
+      const apiUrl = getApiUrl();
       const params = new URLSearchParams();
-      if (page) params.append('page', page.toString());
-      if (pageSize) params.append('page_size', pageSize.toString());
+      if (page) params.append('page', String(page));
+      if (pageSize) params.append('page_size', String(pageSize));
 
       const response = await fetch(
-        `${BACKEND_API_URL}/api/properties/?${params.toString()}`,
+        `${apiUrl}/api/properties/?${params.toString()}`,
       );
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -65,13 +67,14 @@ function getPropertiesByPortfolioQueryOptions(
   return queryOptions<PaginatedPropertyList>({
     queryKey: ['properties', 'portfolio', portfolioId, { page, pageSize }],
     queryFn: async () => {
+      const apiUrl = getApiUrl();
       const params = new URLSearchParams();
       params.append('portfolio', portfolioId.toString());
       if (page) params.append('page', page.toString());
       if (pageSize) params.append('page_size', pageSize.toString());
 
       const response = await fetch(
-        `${BACKEND_API_URL}/api/properties/?${params.toString()}`,
+        `${apiUrl}/api/properties/?${params.toString()}`,
       );
       if (!response.ok) {
         throw new Error('Network response was not ok');

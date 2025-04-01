@@ -88,7 +88,7 @@ Dealt with uni stuff while working on this case, so time estimates are a little 
 - **Backend + Project setup**: ~3 hours work (5 hours total)
 - **Frontend**: 10+ hours work
 
-Spent around 2-3 hours with the project after the meeting.
+Spent around 2-3 hours with the project after the meeting + some time to deploy it to my server.
 
 ## Backend query task and N+1
 
