@@ -9,7 +9,6 @@ const IS_DOCKER = process.env.IS_DOCKER ?? false;
 
 function getApiUrl() {
   // Also check for if we are running through docker to not affect the local development
-  console.log('IS_DOCKER', IS_DOCKER);
   if (typeof window === 'undefined' && IS_DOCKER) {
     return INTERNAL_BACKEND_API_URL;
   }
