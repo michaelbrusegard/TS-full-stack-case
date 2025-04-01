@@ -1,7 +1,7 @@
-@import 'tailwindcss' source('../../');
-@import 'tw-animate-css' source('../../');
-@import 'tw-clamp-css' source('../../');
-@import 'maplibre-gl/dist/maplibre-gl.css' source('../../');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'tw-clamp-css';
+@import 'maplibre-gl/dist/maplibre-gl.css';
 
 @custom-variant dark (&:is(.dark *));
 
