@@ -28,11 +28,10 @@ export const Route = createRootRouteWithContext<{
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Telescope Full Stack Case',
+        title: 'TS Full Stack Case',
       },
       {
-        description:
-          'Telescope Full Stack Code Case with overview over properties.',
+        description: 'TS Full Stack Code Case with overview over properties.',
       },
     ],
     links: [

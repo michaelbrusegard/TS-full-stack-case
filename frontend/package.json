@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "description": "Frontend for Telescope-full-stack-case",
+  "description": "Frontend for TS Full Stack Case",
   "author": "Michael Brusegard",
   "type": "module",
   "scripts": {

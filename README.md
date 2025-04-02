@@ -1,4 +1,4 @@
-# Telescope-full-stack-case
+# TS-full-stack-case
 
 The hosted version can be accessed [here](https://telescope.michaelbrusegard.com/).
 
