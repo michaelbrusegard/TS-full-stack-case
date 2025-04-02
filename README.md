@@ -1,6 +1,6 @@
 # TS-full-stack-case
 
-The hosted version can be accessed [here](https://telescope.michaelbrusegard.com/).
+The hosted version can be accessed [here](https://ts-full-stack-case.michaelbrusegard.com/).
 
 ## How to run
 

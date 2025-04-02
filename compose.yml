@@ -2,7 +2,7 @@ services:
   db:
     image: postgis/postgis:15-3.3
     volumes:
-      - telescope_data:/var/lib/postgresql/data
+      - ts_full_stack_case_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
@@ -54,4 +54,4 @@ services:
       - backend
 
 volumes:
-  telescope_data:
+  ts_full_stack_case_data:
